@@ -1,0 +1,171 @@
+/* Updated login-style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary-color: #FFA500;
+  --primary-hover: #FF8C00;
+  --text-color: #333;
+  --bg-color: #fff;
+  --box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #ececec;
+  transition: background-color 0.3s ease;
+}
+
+/* Main Container with padding */
+.container {
+  padding: 20px;
+}
+
+/* Login Container */
+.box-area {
+  width: 930px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 20px auto;
+}
+
+.box-area:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--box-shadow);
+}
+
+/* Left Box */
+.left-box {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.featured-image {
+  transform: scale(0.9);
+  transition: transform 0.5s ease;
+}
+
+.left-box:hover .featured-image {
+  transform: scale(1);
+}
+
+.responsive-img {
+  width: 300px;
+  transition: transform 0.5s ease;
+}
+
+/* Right Box */
+.right-box {
+  padding: 40px 30px;
+}
+
+/* Form Elements */
+.form-control {
+  border: 2px solid #eee;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(255, 165, 0, 0.25);
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  transition: all 0.3s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  .box-area {
+    margin: 15px;
+    width: auto;
+    max-width: 100%;
+  }
+  
+  .left-box {
+    height: auto;
+    padding: 20px;
+  }
+  
+  .right-box {
+    padding: 20px;
+  }
+  
+  .responsive-img {
+    width: 180px;
+    margin: 0 auto;
+  }
+  
+  .featured-image {
+    transform: scale(1);
+    text-align: center;
+    margin-bottom: 10px !important;
+  }
+  
+  .left-box small {
+    display: none;
+  }
+  
+  .left-box p.fs-2 {
+    font-size: 1.5rem !important;
+    margin-bottom: 0;
+    text-align: center;
+  }
+  
+  .left-box {
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .featured-image.mb-3 {
+    margin-bottom: 10px !important;
+  }
+}
+
+.is-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+.btn.loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn.loading::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ffffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}

@@ -1,0 +1,23 @@
+# Composer vendor folder
+/vendor
+
+# CI4 system directories
+/writable/cache
+/writable/logs
+/writable/session
+/writable/debugbar
+
+# Environment files
+.env
+env
+
+# Database (jika kamu tidak ingin dibagikan)
+db/
+
+# IDEs and Editors
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
