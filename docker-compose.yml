@@ -25,8 +25,8 @@ services:
         </Directory>
       </VirtualHost>' > /etc/apache2/sites-available/000-default.conf &&
       chmod -R 777 /var/www/html/writable &&
-      mkdir -p /var/www/html/writable/session &&
-      chmod -R 777 /var/www/html/writable/session &&
+      mkdir -p /var/www/html/writable/session /var/www/html/writable/cache &&
+      chmod -R 777 /var/www/html/writable &&
       apache2-foreground"
 
   mysql:
