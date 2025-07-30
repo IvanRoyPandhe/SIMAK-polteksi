@@ -55,17 +55,17 @@ class ModelInventaris extends Model
     public function getNamaBarangMasuk()
     {
         return $this->db->table('tb_inventaris')
-            ->select('nama')
+            ->select('nama_barang')
             ->where('status', 0)
             ->where('jumlah >', 0)
-            ->groupBy('nama')
+            ->groupBy('nama_barang')
             ->get()->getResultArray();
     }
 
     public function getInventarisByNama($nama)
     {
         return $this->db->table('tb_inventaris')
-            ->where('nama', $nama)
+            ->where('nama_barang', $nama)
             ->where('status', 0)
             ->where('jumlah >', 0)
             ->get()

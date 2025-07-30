@@ -25,9 +25,17 @@ class FilterPetugas implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (session()->get('level') == "") {
-            return redirect()->to(base_url());
+        if (!session()->get('user_id')) {
+            return redirect()->to(base_url('Auth/Login'));
         }
+        
+        // Allow access for level 1, 2, 3 (Super Admin, Admin, Petugas)
+        if (in_array(session()->get('level'), [1, 2, 3])) {
+            return;
+        }
+        
+        // Redirect unauthorized users
+        return redirect()->to(base_url());
     }
 
     /**
@@ -44,8 +52,6 @@ class FilterPetugas implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        if (session()->get('level') == "2") {
-            return redirect()->to(base_url('Admin'));
-        }
+        // Do nothing in after filter
     }
 }

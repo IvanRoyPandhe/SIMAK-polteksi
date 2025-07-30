@@ -75,9 +75,12 @@
                   </div>
                 </td>
                 <td class="align-middle">
-                  <?= $isi_pengaduan['jawaban'] ?>
-                  <hr class="m-1">
-                  <i class="fas fa-user text-orange" style="margin-right: 8px;"></i><?= $isi_pengaduan['nama_penjawab'] ?>
+                  <?= $isi_pengaduan['jawaban'] ?? 'Belum dijawab' ?>
+                  <?php if (!empty($isi_pengaduan['jawaban'])): ?>
+                    <hr class="m-1">
+                    <i class="fas fa-user text-orange" style="margin-right: 8px;"></i>
+                    <?= $isi_pengaduan['nama_penjawab'] ?? 'Admin' ?>
+                  <?php endif; ?>
                 </td>
                 <td class="text-center align-middle">
                   <?php if ($isi_pengaduan['status'] != '1'): ?>
@@ -111,7 +114,7 @@
   <div class="modal fade" id="modal-lg-<?= $key ?>">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header justify-content-center bg-orange">
+        <div class="modal-header justify-content-center text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class=" modal-title">Lampiran dari "<?= $isi_pengaduan['nama_pengadu'] ?>"</h4>
         </div>
         <div class="modal-body text-center">
@@ -130,7 +133,7 @@
   <div class="modal fade" id="modal-edit<?= $isi_pengaduan['id_pengaduan'] ?>">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-orange">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class="modal-title">Ubah <?= $judul ?></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>

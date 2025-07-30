@@ -25,9 +25,12 @@ class FilterMasyarakat implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (session()->get('level') == "") {
-            return redirect()->to(base_url());
+        if (!session()->get('user_id')) {
+            return redirect()->to(base_url('Auth/Login'));
         }
+        
+        // Allow access for all logged in users
+        return;
     }
 
     /**
@@ -44,8 +47,6 @@ class FilterMasyarakat implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        if (session()->get('level') == "3") {
-            return redirect()->to(base_url());
-        }
+        // Do nothing in after filter
     }
 }

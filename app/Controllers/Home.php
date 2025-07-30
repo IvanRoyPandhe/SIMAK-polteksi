@@ -5,7 +5,7 @@ namespace App\Controllers;
 use App\Models\ModelHome;
 use App\Models\ModelAdmin;
 use App\Models\ModelKasInternal;
-use App\Models\ModelDonasi;
+use App\Models\ModelBeasiswa;
 use App\Controllers\ConvertHijriyah;
 use IntlDateFormatter;
 use DateTime;
@@ -16,7 +16,7 @@ class Home extends BaseController
     protected $ModelHome;
     protected $ModelAdmin;
     protected $ModelKasInternal;
-    protected $ModelDonasi;
+    protected $ModelBeasiswa;
     protected $convertHijriyah;
 
     public function __construct()
@@ -25,7 +25,7 @@ class Home extends BaseController
         $this->ModelHome = new ModelHome();
         $this->ModelAdmin = new ModelAdmin();
         $this->ModelKasInternal = new ModelKasInternal();
-        $this->ModelDonasi = new ModelDonasi();
+        $this->ModelBeasiswa = new ModelBeasiswa();
         $this->convertHijriyah = new ConvertHijriyah();
     }
 
@@ -37,39 +37,16 @@ class Home extends BaseController
         $tahun = date('Y');
         $bulan = date('m');
         $tanggal = date('d');
-        $default_jadwal = [
-            'data' => [
-                'lokasi' => 'Tidak tersedia',
-                'jadwal' => [
-                    'tanggal' => 'N/A',
-                    'imsak' => 'N/A',
-                    'subuh' => 'N/A',
-                    'dzuhur' => 'N/A',
-                    'ashar' => 'N/A',
-                    'maghrib' => 'N/A',
-                    'isya' => 'N/A'
-                ]
-            ]
+        $jadwal_akademik = [
+            'semester_aktif' => 'Semester Ganjil 2024/2025',
+            'minggu_ke' => 'Minggu ke-' . ceil(date('j')/7),
+            'tahun_akademik' => '2024/2025'
         ];
-        try {
-            $url = 'https://api.myquran.com/v2/sholat/jadwal/' . $data_setting['id_lokasi'] . '/' . $tahun . '/' . $bulan . '/' . $tanggal . '';
-            $response = @file_get_contents($url);
-            if ($response === FALSE) {
-                $jadwal_sholat = $default_jadwal;
-            } else {
-                $jadwal_sholat = json_decode($response, true);
-                if (!$jadwal_sholat || !isset($jadwal_sholat['data']['jadwal'])) {
-                    $jadwal_sholat = $default_jadwal;
-                }
-            }
-        } catch (Exception $e) {
-            $jadwal_sholat = $default_jadwal;
-        }
         $data = [
             'judul'         => 'Beranda',
             'menu'          => 'home',
             'page'          => 'home/v_home',
-            'jadwal_sholat' => $jadwal_sholat,
+            'jadwal_akademik' => $jadwal_akademik,
             'kasinternal'   => $this->ModelKasInternal->AllData(),
             'kegiatan'      => $this->ModelHome->DataKegiatan(),
             'pengumuman'    => $this->ModelHome->DataPengumuman(),
@@ -117,8 +94,8 @@ class Home extends BaseController
             $jumlahKategori_keluar[$kategori] = $this->ModelHome->InventariscountByKategori($kategori);
         }
         $data = [
-            'judul'                 => 'Rekapitulasi Keuangan Internal',
-            'judul_inventaris'      => 'Rekapitulasi Inventaris Barang',
+            'judul'                 => 'Rekapitulasi Keuangan Kampus',
+            'judul_inventaris'      => 'Rekapitulasi Inventaris Kampus',
             'menu'                  => 'keuangan',
             'page'                  => 'home/v_rekap_keuangan',
             'kas'                   => $this->ModelHome->DataKasInternal(),
@@ -145,113 +122,26 @@ class Home extends BaseController
         return view('v_template_home', $data);
     }
 
-    public function Donasi()
+    public function Beasiswa()
     {
         $data = [
-            'judul'         => 'Donasi',
-            'menu'          => 'donasi',
-            'subjudul'      => 'Rekening Masjid',
-            'page'          => 'home/v_donasi',
-            'rekening'      => $this->ModelDonasi->AllData(),
-            'donasi'        => $this->ModelDonasi->AllDataDonasi(),
-            'donasi_db'     => $this->ModelDonasi->AllDataDonasiBarang(),
-            'validation'    => \Config\Services::validation(),
+            'judul'         => 'Informasi Beasiswa',
+            'menu'          => 'beasiswa',
+            'page'          => 'home/v_beasiswa',
+            'beasiswa'      => $this->ModelBeasiswa->getActiveScholarships(),
+            'all_beasiswa'  => $this->ModelBeasiswa->AllData(),
         ];
         return view('v_template_home', $data);
     }
 
-    public function InsertDonasi()
-    {
-        $validation = \Config\Services::validation();
-        if ($this->validate([
-            'nama_bank_p' => [
-                'label' => 'Nama Bank Pengirim',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 100 karakter',
-                ]
-            ],
-            'no_rek_p' => [
-                'label' => 'No Rekening Pengirim',
-                'rules' => 'required|max_length[25]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 25 karakter',
-                ]
-            ],
-            'nama_rek_p' => [
-                'label' => 'Nama Rekening Pengirim',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 100 karakter',
-                ]
-            ],
-            'nama_p' => [
-                'label' => 'Nama Pengirim',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 100 karakter',
-                ]
-            ],
-            'jumlah' => [
-                'label' => 'jumlah',
-                'rules' => 'required|numeric|greater_than[0]|less_than_equal_to[2147483647]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'numeric' => '{field} harus berupa angka',
-                    'greater_than' => '{field} harus lebih besar dari 0',
-                    'less_than_equal_to' => '{field} tidak boleh lebih dari 10 digit (Rp. 2,147,483,647)',
-                ]
-            ],
-            'bukti_transfer' => [
-                'label' => 'Bukti Transfer',
-                'rules' => 'uploaded[bukti_transfer]|max_size[bukti_transfer,5000]|mime_in[bukti_transfer,image/png,image/jpg,image/jpeg]',
-                'errors' => [
-                    'uploaded' => '{field} harus di upload',
-                    'max_size' => '{field} ukuran maksimal 5MB',
-                    'mime_in' => '{field} hanya bisa mengirim format gambar',
-                ]
-            ],
-            'rekening_id' => [
-                'label' => 'Rekening Penerima',
-                'rules' => 'required',
-                'errors' => [
-                    'required' => '{field} harus dipilih'
-                ]
-            ],
-        ])) {
-            $bukti = $this->request->getFile('bukti_transfer');
-            $file_bukti = $bukti->getRandomName();
-            $data = [
-                'rekening_id'       => esc($this->request->getPost('rekening_id')),
-                'nama_bank_p'       => esc($this->request->getPost('nama_bank_p')),
-                'no_rek_p'          => esc($this->request->getPost('no_rek_p')),
-                'nama_rek_p'        => esc($this->request->getPost('nama_rek_p')),
-                'nama_p'            => esc($this->request->getPost('nama_p')),
-                'jumlah'            => esc($this->request->getPost('jumlah')),
-                'status'            => 'Belum Tervalidasi',
-                'jenis'             => 'Tunai',
-                'bukti_transfer'    => $file_bukti,
-            ];
-            $bukti->move('uploaded/bukti_transfer', $file_bukti);
-            $this->ModelHome->InsertDonasi($data);
-            session()->setFlashdata('info', 'Bukti Transfer berhasil dikirim, menunggu di validasi takmir dan akan tampil di Halaman Keuangan');
-            return redirect()->to(base_url('Home/Donasi'));
-        } else {
-            session()->setFlashdata('errors', $validation->getErrors());
-            return redirect()->to(base_url('Home/Donasi'))->withInput('validation', \Config\Services::validation());
-        }
-    }
 
-    public function ProfilMasjid()
+
+    public function ProfilKampus()
     {
         $data = [
-            'judul'         => 'Profil Masjid',
+            'judul'         => 'Profil Kampus',
             'menu'          => 'tentang',
-            'page'          => 'home/v_profil_masjid',
+            'page'          => 'home/v_profil_kampus',
             'tentang'       => $this->ModelHome->ViewSetting(),
         ];
         return view('v_template_home', $data);
@@ -260,7 +150,7 @@ class Home extends BaseController
     public function Pengaduan()
     {
         $data = [
-            'judul'     => 'Pengaduan Masjid',
+            'judul'     => 'Pengaduan Mahasiswa',
             'menu'      => 'pengaduan',
             'page'      => 'home/v_pengaduan',
             'pengaduan' => $this->ModelHome->AllDataPengaduan(),
@@ -328,7 +218,7 @@ class Home extends BaseController
                 'status'        => 0,
             ];
             $this->ModelHome->InsertPengaduan($data);
-            session()->setFlashdata('info', 'Pengaduan berhasil dikirim, menunggu di jawaban takmir');
+            session()->setFlashdata('info', 'Pengaduan berhasil dikirim, menunggu jawaban dari admin kampus');
             return redirect()->to(base_url('Home/Pengaduan'));
         } else {
             session()->setFlashdata('errors', $validation->getErrors());

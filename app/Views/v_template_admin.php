@@ -4,14 +4,26 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?= $judul ?> | Al-Muhtaram</title>
+    <title><?= $judul ?> | SIMAK Kampus</title>
 
-    <link rel="shortcut icon" type="image/png" href="<?= base_url('simas.ico') ?>">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('polteksi.ico') ?>">
 
     <style>
         .sidebar-item.active .sidebar-link {
-            background-color: orange !important;
+            background-color: #dc2626 !important;
             color: white !important;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+        }
+        
+        .sidebar-item .sidebar-link:hover {
+            background-color: rgba(220, 38, 38, 0.1) !important;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar-item.active .sidebar-link:hover {
+            background-color: #b91c1c !important;
         }
 
         /* Summernote */
@@ -91,7 +103,7 @@
                 <div class="sidebar-header position-relative">
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="logo">
-                            <a href="<?= base_url('Admin') ?>"><img src="<?= base_url('pictures') ?>/logos/simas2.png" alt="Logo" srcset="" style="width: 120px; height: 60px;"></a>
+                            <a href="<?= base_url('Admin') ?>"><img src="<?= base_url('pictures') ?>/logos/kampus-logo.png" alt="Logo" srcset="" style="width: 140px; height: 45px; object-fit: contain;"></a>
                         </div>
                         <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true"
@@ -130,85 +142,168 @@
                     <ul class="menu">
                         <li class="sidebar-title">Menu</li>
                         <li class="sidebar-item <?= $menu == 'dashboard' ? 'active' : '' ?>">
-                            <a href=" <?= base_url('Admin') ?>" class='sidebar-link'>
-                                <i class="bi bi-grid-fill"></i>
-                                <span>Dashboard</span>
-                            </a>
+                            <?php if (session()->get('level') == 4): ?>
+                                <a href=" <?= base_url('Dashboard/Mahasiswa') ?>" class='sidebar-link'>
+                                    <i class="bi bi-grid-fill"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            <?php elseif (session()->get('level') == 5): ?>
+                                <a href=" <?= base_url('Dashboard/Dosen') ?>" class='sidebar-link'>
+                                    <i class="bi bi-grid-fill"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            <?php elseif (session()->get('level') == 3): ?>
+                                <a href=" <?= base_url('Dashboard/Petugas') ?>" class='sidebar-link'>
+                                    <i class="bi bi-grid-fill"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            <?php else: ?>
+                                <a href=" <?= base_url('Admin') ?>" class='sidebar-link'>
+                                    <i class="bi bi-grid-fill"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            <?php endif; ?>
                         </li>
+                        <?php if (in_array(session()->get('level'), [1, 2])): ?>
                         <li class="sidebar-title">Keuangan</li>
-                        <?php if (session()->get('level') == 1): ?>
                             <li class="sidebar-item <?= $menu == 'kas-internal' ? 'active' : '' ?> has-sub">
                                 <a href="#" class='sidebar-link'>
-                                    <i class="fas fa-wallet"></i>
-                                    <span>Kas Internal</span>
+                                    <i class="fas fa-university"></i>
+                                    <span>Keuangan Internal</span>
                                 </a>
                                 <ul class="submenu <?= $menu == 'kas-internal' ? 'active submenu-open' : '' ?>">
+                                    <li class="submenu-item <?= $submenu == 'dashboard-keuangan' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KasInternal') ?>" class="submenu-link"><i class="nav-icon fas fa-chart-pie" style="margin-right: 8px;"></i>Dashboard</a>
+                                    </li>
                                     <li class="submenu-item <?= $submenu == 'dana-masuk-internal' ? 'active' : '' ?>">
-                                        <a href="<?= base_url('KasInternal/DanaMasuk') ?>" class="submenu-link"><i class="nav-icon far fa-circle text-success" style="margin-right: 8px;"></i>Dana Masuk</a>
+                                        <a href="<?= base_url('KasInternal/DanaMasuk') ?>" class="submenu-link"><i class="nav-icon far fa-circle text-success" style="margin-right: 8px;"></i>Pemasukan</a>
                                     </li>
                                     <li class="submenu-item <?= $submenu == 'dana-keluar-internal' ? 'active' : '' ?>">
-                                        <a href="<?= base_url('KasInternal/DanaKeluar') ?>" class="submenu-link"><i class="nav-icon far fa-circle text-danger" style="margin-right: 8px;"></i>Dana Keluar</a>
+                                        <a href="<?= base_url('KasInternal/DanaKeluar') ?>" class="submenu-link"><i class="nav-icon far fa-circle text-danger" style="margin-right: 8px;"></i>Pengeluaran</a>
                                     </li>
-                                    <li class="submenu-item <?= $submenu == 'rekap-kas-internal' ? 'active' : '' ?>">
-                                        <a href="<?= base_url('KasInternal') ?>" class="submenu-link"><i class="nav-icon far fa-circle" style="margin-right: 8px;"></i>Rekapitulasi</a>
+                                    <li class="submenu-item <?= $submenu == 'anggaran' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KasInternal/Anggaran') ?>" class="submenu-link"><i class="nav-icon fas fa-calculator" style="margin-right: 8px;"></i>Anggaran</a>
                                     </li>
-                                </ul>
-                            </li>
-                        <?php endif; ?>
-                        <?php if (session()->get('level') == 1): ?>
-                            <li class="sidebar-item <?= $menu == 'donasi' ? 'active' : '' ?> has-sub">
-                                <a href="#" class='sidebar-link'>
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span>Donasi</span>
-                                </a>
-                                <ul class="submenu <?= $menu == 'donasi' ? 'active submenu-open' : '' ?>">
-                                    <li class="submenu-item <?= $submenu == 'donasi-rekening' ? 'active' : '' ?>">
-                                        <a href="<?= base_url('Donasi/Rekening') ?>" class="submenu-link"><i class="nav-icon fab fa-cc-visa text-secondary" style="margin-right: 8px;"></i>Rekening Masjid</a>
+                                    <li class="submenu-item <?= $submenu == 'rekening-bank' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KasInternal/RekeningBank') ?>" class="submenu-link"><i class="nav-icon fas fa-university" style="margin-right: 8px;"></i>Rekening Bank</a>
                                     </li>
-                                    <li class="submenu-item <?= $submenu == 'donasi-masuk' ? 'active' : '' ?>">
-                                        <a href="<?= base_url('Donasi/DonasiMasuk') ?>" class="submenu-link"><i class="nav-icon fas fa-hand-holding-medical text-secondary" style="margin-right: 8px;"></i>Donasi Masuk</a>
+                                    <li class="submenu-item <?= $submenu == 'kategori-keuangan' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KasInternal/Kategori') ?>" class="submenu-link"><i class="nav-icon fas fa-tags" style="margin-right: 8px;"></i>Kategori</a>
+                                    </li>
+                                    <li class="submenu-item <?= $submenu == 'laporan-keuangan' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KasInternal/Laporan') ?>" class="submenu-link"><i class="nav-icon fas fa-file-invoice" style="margin-right: 8px;"></i>Laporan</a>
                                     </li>
                                 </ul>
                             </li>
                         <?php endif; ?>
-                        <?php if (session()->get('level') == 1): ?>
-                            <li class="sidebar-item <?= $menu == 'bisyaroh' ? 'active' : '' ?>">
-                                <a href=" <?= base_url('Bisyaroh') ?>" class='sidebar-link'>
-                                    <i class="fas fa-handshake"></i>
-                                    <span>Bisyaroh</span>
+                        <?php if (in_array(session()->get('level'), [1, 2, 3])): ?>
+                        <li class="sidebar-title">Data Akademik</li>
+                            <?php if (in_array(session()->get('level'), [1, 2])): ?>
+                            <li class="sidebar-item <?= $menu == 'mahasiswa' ? 'active' : '' ?>">
+                                <a href=" <?= base_url('Mahasiswa') ?>" class='sidebar-link'>
+                                    <i class="fas fa-user-graduate"></i>
+                                    <span>Data Mahasiswa</span>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <?php if (in_array(session()->get('level'), [1, 2])): ?>
+                            <li class="sidebar-item <?= $menu == 'dosen' ? 'active' : '' ?>">
+                                <a href=" <?= base_url('Dosen') ?>" class='sidebar-link'>
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <span>Data Dosen</span>
+                                </a>
+                            </li>
+                            <?php endif; ?>
+                            <li class="sidebar-item <?= $menu == 'beasiswa' ? 'active' : '' ?>">
+                                <a href=" <?= base_url('Beasiswa') ?>" class='sidebar-link'>
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Beasiswa</span>
                                 </a>
                             </li>
                         <?php endif; ?>
-                        <?php if (session()->get('level') == 1): ?>
+                        <?php if (in_array(session()->get('level'), [1, 2, 3])): ?>
                             <li class="sidebar-item <?= $menu == 'inventaris' ? 'active' : '' ?>">
                                 <a href=" <?= base_url('Inventaris') ?>" class='sidebar-link'>
                                     <i class="bi bi-archive-fill"></i>
                                     <span>Inventaris</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item <?= $menu == 'jadwal' ? 'active' : '' ?> has-sub">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>Jadwal & Ruangan</span>
+                                </a>
+                                <ul class="submenu <?= $menu == 'jadwal' ? 'active submenu-open' : '' ?>">
+                                    <li class="submenu-item <?= $submenu == 'ruangan' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('Ruangan') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-door-open" style="margin-right: 8px;"></i>
+                                            Manajemen Ruangan
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item <?= $submenu == 'jadwal-kuliah' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('JadwalKuliah') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-clock" style="margin-right: 8px;"></i>
+                                            Jadwal Kuliah
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li class="sidebar-item <?= $menu == 'akademik' ? 'active' : '' ?> has-sub">
+                                <a href="#" class='sidebar-link'>
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>KRS & KHS</span>
+                                </a>
+                                <ul class="submenu <?= $menu == 'akademik' ? 'active submenu-open' : '' ?>">
+                                    <li class="submenu-item <?= $submenu == 'mata-kuliah' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('MataKuliah') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-book" style="margin-right: 8px;"></i>
+                                            Mata Kuliah
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item <?= $submenu == 'krs' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KRS') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-file-alt" style="margin-right: 8px;"></i>
+                                            Manajemen KRS
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item <?= $submenu == 'khs' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('KHS') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-chart-line" style="margin-right: 8px;"></i>
+                                            Manajemen KHS
+                                        </a>
+                                    </li>
+                                    <li class="submenu-item <?= $submenu == 'nilai' ? 'active' : '' ?>">
+                                        <a href="<?= base_url('Nilai') ?>" class="submenu-link">
+                                            <i class="nav-icon fas fa-star" style="margin-right: 8px;"></i>
+                                            Manajemen Nilai
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         <?php endif; ?>
+                        <?php if (in_array(session()->get('level'), [1, 2])): ?>
                         <li class="sidebar-item <?= $menu == 'laporan' ? 'active' : '' ?> has-sub">
                             <a href="#" class='sidebar-link'>
                                 <i class="fas fa-book"></i>
-                                <span>Laporan Keuangan</span>
+                                <span>Laporan</span>
                             </a>
                             <ul class="submenu <?= $menu == 'laporan-kas' ? 'active submenu-open' : '' ?>">
                                 <li class="submenu-item <?= $submenu == 'laporan-kas-internal' ? 'active' : '' ?>">
-                                    <a href="<?= base_url('Laporan/LaporanKas') ?>" class="submenu-link"><i class="nav-icon far bi bi-wallet" style="margin-right: 8px;"></i>Kas Internal</a>
-                                </li>
-                                <li class="submenu-item <?= $submenu == 'laporan-bisyaroh' ? 'active' : '' ?>">
-                                    <a href="<?= base_url('Laporan/LaporanBisyaroh') ?>" class="submenu-link"><i class="nav-icon far fa-handshake text-secondary" style="margin-right: 8px;"></i>Bisyaroh</a>
+                                    <a href="<?= base_url('Laporan/LaporanKas') ?>" class="submenu-link"><i class="nav-icon far bi bi-wallet" style="margin-right: 8px;"></i>Keuangan Kampus</a>
                                 </li>
                                 <li class="submenu-item <?= $submenu == 'laporan-inventaris' ? 'active' : '' ?>">
                                     <a href="<?= base_url('Laporan/LaporanInventaris') ?>" class="submenu-link"><i class="nav-icon bi bi-archive" style="margin-right: 8px;"></i>Inventaris</a>
                                 </li>
                             </ul>
                         </li>
-                        <li class="sidebar-title">Kegiatan</li>
+                        <?php endif; ?>
+                        <?php if (in_array(session()->get('level'), [1, 2, 3])): ?>
+                        <li class="sidebar-title">Kegiatan Kampus</li>
                         <li class="sidebar-item <?= $menu == 'kegiatan' ? 'active' : '' ?>">
                             <a href=" <?= base_url('Kegiatan') ?>" class='sidebar-link'>
                                 <i class="fas fa-calendar-check"></i>
-                                <span>Pengumuman</span>
+                                <span>Kegiatan & Pengumuman</span>
                             </a>
                         </li>
                         <li class="sidebar-item <?= $menu == 'artikel' ? 'active' : '' ?> has-sub">
@@ -217,12 +312,14 @@
                                 <span>Artikel</span>
                             </a>
                             <ul class="submenu <?= $menu == 'artikel' ? 'active submenu-open' : '' ?>">
+                                <?php if (in_array(session()->get('level'), [1, 2])): ?>
                                 <li class="submenu-item <?= $submenu == 'kategori-artikel' ? 'active' : '' ?>">
                                     <a href="<?= base_url('Artikel/Kategori') ?>" class="submenu-link">
                                         <i class="nav-icon fas fa-list" style="margin-right: 8px;"></i>
                                         Kategori
                                     </a>
                                 </li>
+                                <?php endif; ?>
                                 <li class="submenu-item <?= $submenu == 'artikel-sub' ? 'active' : '' ?>">
                                     <a href="<?= base_url('Artikel') ?>" class="submenu-link">
                                         <i class="nav-icon fas fa-file-alt text-secondary" style="margin-right: 8px;"></i>
@@ -234,9 +331,124 @@
                         <li class="sidebar-item <?= $menu == 'pengaduan' ? 'active' : '' ?>">
                             <a href="<?= base_url('Pengaduan') ?>" class='sidebar-link'>
                                 <i class="fas fa-question-circle"></i>
+                                <span>Pengaduan Mahasiswa</span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                        
+                        <?php if (session()->get('level') == 1 || session()->get('level') == 2): ?>
+                        <li class="sidebar-item <?= $menu == 'periode-akademik' ? 'active' : '' ?>">
+                            <a href="<?= base_url('PeriodeAkademik') ?>" class='sidebar-link'>
+                                <i class="fas fa-calendar-check"></i>
+                                <span>Periode Akademik</span>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                        
+                        <?php if (session()->get('level') == 4): ?>
+                        <li class="sidebar-title">Menu Mahasiswa</li>
+                        <li class="sidebar-item <?= $menu == 'profile' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/ProfileMahasiswa') ?>" class='sidebar-link'>
+                                <i class="fas fa-user"></i>
+                                <span>My Profile</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'krs-mahasiswa' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/KRS') ?>" class='sidebar-link'>
+                                <i class="fas fa-file-alt"></i>
+                                <span>KRS</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'khs-mahasiswa' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/KHS') ?>" class='sidebar-link'>
+                                <i class="fas fa-chart-line"></i>
+                                <span>KHS</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'nilai' ? 'active' : '' ?> has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fas fa-star"></i>
+                                <span>Nilai</span>
+                            </a>
+                            <ul class="submenu <?= $menu == 'nilai' ? 'active submenu-open' : '' ?>">
+                                <li class="submenu-item <?= $submenu == 'laporan-nilai' ? 'active' : '' ?>">
+                                    <a href="<?= base_url('Dashboard/LaporanNilai') ?>" class="submenu-link">
+                                        <i class="nav-icon fas fa-list" style="margin-right: 8px;"></i>
+                                        Laporan Nilai
+                                    </a>
+                                </li>
+                                <li class="submenu-item <?= $submenu == 'transkrip-nilai' ? 'active' : '' ?>">
+                                    <a href="<?= base_url('Dashboard/TranskripNilai') ?>" class="submenu-link">
+                                        <i class="nav-icon fas fa-file-alt" style="margin-right: 8px;"></i>
+                                        Transkrip Nilai
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'jadwal' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/JadwalKuliah') ?>" class='sidebar-link'>
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Jadwal Kuliah</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'beasiswa' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Beasiswa') ?>" class='sidebar-link'>
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Info Beasiswa</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'artikel' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Artikel') ?>" class='sidebar-link'>
+                                <i class="fas fa-newspaper"></i>
+                                <span>Artikel Kampus</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'pengaduan' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Pengaduan') ?>" class='sidebar-link'>
+                                <i class="fas fa-question-circle"></i>
                                 <span>Pengaduan</span>
                             </a>
                         </li>
+                        <?php elseif (session()->get('level') == 5): ?>
+                        <li class="sidebar-title">Menu Dosen</li>
+                        <li class="sidebar-item <?= $menu == 'dashboard' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen') ?>" class='sidebar-link'>
+                                <i class="fas fa-tachometer-alt"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'jadwal' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/JadwalMengajar') ?>" class='sidebar-link'>
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Jadwal Mengajar</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'nilai' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/InputNilai') ?>" class='sidebar-link'>
+                                <i class="fas fa-star"></i>
+                                <span>Input Nilai</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'bimbingan' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/BimbinganAkademik') ?>" class='sidebar-link'>
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Bimbingan Akademik</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fas fa-upload"></i>
+                                <span>Materi Kuliah</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="#" class='sidebar-link'>
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Laporan</span>
+                            </a>
+                        </li>
+
+                        <?php endif; ?>
                         <?php if (session()->get('level') == 1): ?>
                             <li class="sidebar-title">Setting</li>
                             <li class="sidebar-item <?= $menu == 'user-setting' ? 'active' : '' ?>">
@@ -276,17 +488,17 @@
                                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600"><?= $user['nama'] ?></h6>
+                                            <h6 class="mb-0 text-gray-600"><?= $user['nama'] ?? 'Guest' ?></h6>
                                             <p class="mb-0 text-sm text-gray-600">
                                                 <?php
-                                                $levels = [1 => "Super Admin", 2 => "Admin", 3 => "Petugas", 4 => "Masyarakat"];
-                                                echo $levels[$user['level_id']] ?? "Level tidak dikenali";
+                                                $levels = [1 => "Super Admin", 2 => "Admin", 3 => "Petugas", 4 => "Mahasiswa", 5 => "Dosen"];
+                                                echo $levels[$user['level_id'] ?? 0] ?? "Guest";
                                                 ?>
                                             </p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="<?= base_url('uploaded/profil_user/' . $user['profil']) ?>">
+                                                <img src="<?= base_url('uploaded/profil_user/' . ($user['profil'] ?? 'avatar.png')) ?>">
                                             </div>
                                         </div>
                                     </div>
@@ -316,7 +528,15 @@
                             <div class="col-12 col-md-6 order-md-2 order-first">
                                 <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="<?= base_url('Admin') ?>">Dashboard</a></li>
+                                        <?php if (session()->get('level') == 4): ?>
+                                            <li class="breadcrumb-item"><a href="<?= base_url('Dashboard/Mahasiswa') ?>">Dashboard</a></li>
+                                        <?php elseif (session()->get('level') == 5): ?>
+                                            <li class="breadcrumb-item"><a href="<?= base_url('Dashboard/Dosen') ?>">Dashboard</a></li>
+                                        <?php elseif (session()->get('level') == 3): ?>
+                                            <li class="breadcrumb-item"><a href="<?= base_url('Dashboard/Petugas') ?>">Dashboard</a></li>
+                                        <?php else: ?>
+                                            <li class="breadcrumb-item"><a href="<?= base_url('Admin') ?>">Dashboard</a></li>
+                                        <?php endif; ?>
                                         <li class="breadcrumb-item active" aria-current="page"><?= $judul ?></li>
                                     </ol>
                                 </nav>
@@ -334,7 +554,7 @@
             </div>
             <footer>
                 <div class="footer clearfix mb-0 text-muted text-center">
-                    <p><?= date('Y') ?> &copy; MASJID <?= $web['nama_masjid'] ?>. All Rights Reserved.</p>
+                    <p><?= date('Y') ?> &copy; KAMPUS <?= $web['nama_kampus'] ?>. All Rights Reserved.</p>
                 </div>
             </footer>
         </div>
@@ -541,6 +761,42 @@
                     case 'donasimasuk-barang':
                         message = `Data "${name}" akan dihapus!`;
                         url = `<?= base_url('Donasi/DeleteDonasiMasukBarang/') ?>/${id}`;
+                        break;
+                    case 'mahasiswa':
+                        message = `Data mahasiswa "${name}" akan dihapus!`;
+                        url = `<?= base_url('Mahasiswa/Delete/') ?>/${id}`;
+                        break;
+                    case 'dosen':
+                        message = `Data dosen "${name}" akan dihapus!`;
+                        url = `<?= base_url('Dosen/Delete/') ?>/${id}`;
+                        break;
+                    case 'beasiswa':
+                        message = `Data beasiswa "${name}" akan dihapus!`;
+                        url = `<?= base_url('Beasiswa/Delete/') ?>/${id}`;
+                        break;
+                    case 'ruangan':
+                        message = `Data ruangan "${name}" akan dihapus!`;
+                        url = `<?= base_url('Ruangan/Delete/') ?>/${id}`;
+                        break;
+                    case 'jadwal':
+                        message = `Jadwal "${name}" akan dihapus!`;
+                        url = `<?= base_url('JadwalKuliah/Delete/') ?>/${id}`;
+                        break;
+                    case 'matkul':
+                        message = `Mata kuliah "${name}" akan dihapus!`;
+                        url = `<?= base_url('MataKuliah/Delete/') ?>/${id}`;
+                        break;
+                    case 'krs':
+                        message = `Data KRS "${name}" akan dihapus!`;
+                        url = `<?= base_url('KRS/Delete/') ?>/${id}`;
+                        break;
+                    case 'khs':
+                        message = `Data KHS "${name}" akan dihapus!`;
+                        url = `<?= base_url('KHS/Delete/') ?>/${id}`;
+                        break;
+                    case 'periode':
+                        message = `Periode "${name}" akan dihapus!`;
+                        url = `<?= base_url('PeriodeAkademik/Delete/') ?>/${id}`;
                         break;
                     default:
                         console.log('Tipe data tidak dikenal');

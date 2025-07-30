@@ -25,9 +25,17 @@ class FilterAdmin implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (session()->get('level') == "") {
-            return redirect()->to(base_url());
+        if (!session()->get('user_id')) {
+            return redirect()->to(base_url('Auth/Login'));
         }
+        
+        // Allow access for level 1 & 2 (Super Admin & Admin)
+        if (in_array(session()->get('level'), [1, 2])) {
+            return;
+        }
+        
+        // Redirect non-admin users to home
+        return redirect()->to(base_url());
     }
 
     /**
@@ -44,8 +52,6 @@ class FilterAdmin implements FilterInterface
      */
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        if (session()->get('level') == "1") {
-            return redirect()->to(base_url('Admin'));
-        }
+        // Do nothing in after filter
     }
 }

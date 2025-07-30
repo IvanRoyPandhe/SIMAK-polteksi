@@ -5,7 +5,7 @@
 </section>
 
 <!-- Header -->
-<header class="text-white py-5 mb-3 animate-header" style="background-color: #ff9800;">
+<header class="text-white py-5 mb-3 animate-header" style="background-color: #dc2626;">
   <div class="container">
     <div class="row">
       <div class="col-md-12 mx-auto text-center">
@@ -161,8 +161,8 @@
   }
 
   .tag-button:hover {
-    background-color: #ff9800;
-    border-color: #ff9800;
+    background-color: #dc2626;
+    border-color: #dc2626;
     color: white;
     transform: translateY(-2px);
   }
@@ -277,7 +277,7 @@
   }
 
   .navbar-section {
-    background-color: #ff9800;
+    background-color: #dc2626;
     width: 100%;
     height: 15vh;
   }
@@ -288,7 +288,7 @@
   }
 
   .btn-light:hover {
-    background-color: #ff9800;
+    background-color: #dc2626;
     transform: translateX(-5px);
   }
 

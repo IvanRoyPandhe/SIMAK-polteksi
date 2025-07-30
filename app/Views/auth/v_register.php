@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Al-Muhtaram | <?= $judul ?></title>
+  <title>POLTEKSI | <?= $judul ?></title>
 
   <link rel="shortcut icon" type="image/png" href="<?= base_url('simas.ico') ?>">
   <!-- Bootsrap 5 -->
@@ -91,7 +91,7 @@
             <?php endif; ?>
           </div>
           <div class="input-group mb-3">
-            <button class="btn btn-lg w-100 fs-6" style="background-color: #FFA500;" type="submit">Register</button>
+            <button class="btn btn-lg w-100 fs-6" style="background-color: #dc2626;" type="submit">Register</button>
           </div>
           <?php form_close() ?>
           <div class="row">
@@ -100,12 +100,12 @@
         </div>
       </div>
       <!--------------------- Right Box --------------------->
-      <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box bg-orange" style="background: #FFA500;">
+      <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);" style="background: #dc2626;">
         <div class="featured-image mb-3">
           <img src="<?= base_url('pictures') ?>/login-images/1.png" class="img-fluid responsive-img">
         </div>
-        <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 700;">SIMAS AL-MUHTARAM</p>
-        <small class="text-white text-wrap text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">Memudahkan Pengelolaan Masjid, Layanan Jamaah, dan Menyebarkan Manfaat untuk Umat.</small>
+        <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 700;">SIMAK POLTEKSI</p>
+        <small class="text-white text-wrap text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">Memudahkan Pengelolaan Kampus, Layanan Mahasiswa, dan Menyebarkan Informasi Akademik.</small>
       </div>
     </div>
   </div>

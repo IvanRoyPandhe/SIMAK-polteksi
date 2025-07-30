@@ -1,23 +1,48 @@
-# Composer vendor folder
-/vendor
-
-# CI4 system directories
-/writable/cache
-/writable/logs
-/writable/session
-/writable/debugbar
+# CodeIgniter 4
+/vendor/
+/writable/cache/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+!/writable/cache/index.html
+!/writable/logs/index.html
+!/writable/session/index.html
+!/writable/uploads/index.html
 
 # Environment files
 .env
-env
+.env.*
 
-# Database (jika kamu tidak ingin dibagikan)
-db/
-
-# IDEs and Editors
-.idea/
+# IDE files
 .vscode/
+.idea/
+*.swp
+*.swo
 
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node modules (if using)
+node_modules/
+
+# Composer
+composer.lock
+
+# Database
+*.sql
+*.db
+*.sqlite
+
+# Uploaded files
+public/uploaded/*
+!/public/uploaded/.gitkeep
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+
+# Cache
+*.cache

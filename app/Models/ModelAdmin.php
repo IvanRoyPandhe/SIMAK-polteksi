@@ -25,10 +25,90 @@ class ModelAdmin extends Model
     public function AllDataKasInternal()
     {
         return $this->db->table('tb_keuangan_internal')
+            ->join('tb_kategori_keuangan', 'tb_kategori_keuangan.id_kategori = tb_keuangan_internal.kategori_id', 'left')
+            ->select('tb_keuangan_internal.*, tb_kategori_keuangan.nama_kategori, tb_kategori_keuangan.kode_kategori')
             ->where('month(tgl)', date('m'))
             ->where('year(tgl)', date('Y'))
-            ->orderBy('tgl')
+            ->orderBy('tgl', 'DESC')
             ->get()->getResultArray();
+    }
+
+    public function getKeuanganStats()
+    {
+        $currentMonth = date('Y-m');
+        $lastMonth = date('Y-m', strtotime('-1 month'));
+        
+        // Total pemasukan bulan ini
+        $pemasukan_bulan_ini = $this->db->table('tb_keuangan_internal')
+            ->selectSum('dana_masuk')
+            ->where('DATE_FORMAT(tgl, "%Y-%m")', $currentMonth)
+            ->get()->getRowArray()['dana_masuk'] ?? 0;
+            
+        // Total pengeluaran bulan ini
+        $pengeluaran_bulan_ini = $this->db->table('tb_keuangan_internal')
+            ->selectSum('dana_keluar')
+            ->where('DATE_FORMAT(tgl, "%Y-%m")', $currentMonth)
+            ->get()->getRowArray()['dana_keluar'] ?? 0;
+            
+        // Saldo bank
+        $total_saldo_bank = $this->db->table('tb_rekening_bank')
+            ->selectSum('saldo_akhir')
+            ->where('is_active', 1)
+            ->get()->getRowArray()['saldo_akhir'] ?? 0;
+            
+        // Transaksi pending approval
+        $pending_approval = $this->db->table('tb_keuangan_internal')
+            ->where('status_approval', 'Pending')
+            ->countAllResults();
+            
+        return [
+            'pemasukan_bulan_ini' => $pemasukan_bulan_ini,
+            'pengeluaran_bulan_ini' => $pengeluaran_bulan_ini,
+            'saldo_bersih' => $pemasukan_bulan_ini - $pengeluaran_bulan_ini,
+            'total_saldo_bank' => $total_saldo_bank,
+            'pending_approval' => $pending_approval
+        ];
+    }
+
+    public function getTopKategoriPengeluaran($limit = 5)
+    {
+        return $this->db->table('tb_keuangan_internal')
+            ->join('tb_kategori_keuangan', 'tb_kategori_keuangan.id_kategori = tb_keuangan_internal.kategori_id')
+            ->select('tb_kategori_keuangan.nama_kategori, SUM(tb_keuangan_internal.dana_keluar) as total')
+            ->where('tb_kategori_keuangan.jenis', 'Pengeluaran')
+            ->where('MONTH(tb_keuangan_internal.tgl)', date('m'))
+            ->where('YEAR(tb_keuangan_internal.tgl)', date('Y'))
+            ->groupBy('tb_kategori_keuangan.id_kategori')
+            ->orderBy('total', 'DESC')
+            ->limit($limit)
+            ->get()->getResultArray();
+    }
+
+    public function getCashFlowTrend($months = 6)
+    {
+        $result = [];
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $month = date('Y-m', strtotime("-$i months"));
+            $monthName = date('M Y', strtotime("-$i months"));
+            
+            $pemasukan = $this->db->table('tb_keuangan_internal')
+                ->selectSum('dana_masuk')
+                ->where('DATE_FORMAT(tgl, "%Y-%m")', $month)
+                ->get()->getRowArray()['dana_masuk'] ?? 0;
+                
+            $pengeluaran = $this->db->table('tb_keuangan_internal')
+                ->selectSum('dana_keluar')
+                ->where('DATE_FORMAT(tgl, "%Y-%m")', $month)
+                ->get()->getRowArray()['dana_keluar'] ?? 0;
+                
+            $result[] = [
+                'bulan' => $monthName,
+                'pemasukan' => $pemasukan,
+                'pengeluaran' => $pengeluaran,
+                'saldo' => $pemasukan - $pengeluaran
+            ];
+        }
+        return $result;
     }
 
     public function getMonthlyData()
@@ -93,23 +173,12 @@ class ModelAdmin extends Model
             ->get()->getResultArray();
     }
 
-    public function AllDataDonasi()
-    {
-        return $this->db->table('tb_donasi')
-            ->join('tb_rekening', 'tb_rekening.id_rekening = tb_donasi.rekening_id', 'left')
-            ->select('tb_rekening.no_rek as no_rek_tujuan')
-            ->select('tb_rekening.nama_bank as nama_bank_tujuan')
-            ->select('tb_rekening.nama_rek as nama_rek_tujuan')
-            ->select('tb_donasi.*, tb_rekening.nama_rek as nama_rekening')
-            ->where('jenis', 'Tunai')
-            ->where('status', 'Belum Tervalidasi')
-            ->orderBy('created_at DESC')
-            ->get()->getResultArray();
-    }
+
 
     public function getUserById($user_id)
     {
         return $this->db->table('tb_users')
+            ->select('tb_users.*, tb_users.mahasiswa_id, tb_users.dosen_id')
             ->where('id_user', $user_id)
             ->get()
             ->getRowArray();

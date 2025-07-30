@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Al-Muhtaram | <?= $judul ?></title>
+    <title>SIMAK Kampus | <?= $judul ?></title>
 
-    <link rel="shortcut icon" type="image/png" href="<?= base_url('simas.ico') ?>">
+    <link rel="shortcut icon" type="image/x-icon" href="<?= base_url('polteksi.ico') ?>">
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -71,10 +71,10 @@
     ?>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand me-auto" href="<?= base_url() ?>"><img src="<?= base_url('pictures') ?>/logos/simas2.png" alt="Logo" srcset="" style="width: 120px; height: 60px;"></a>
+            <a class="navbar-brand me-auto" href="<?= base_url() ?>"><img src="<?= base_url('pictures') ?>/logos/kampus-logo.png" alt="Logo" srcset="" style="width: 200px; height: 45px; object-fit: contain;"></a>
             <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="<?= base_url('pictures') ?>/logos/simas2.png" alt="Logo" srcset="" style="width: 120px; height: 60px;"></h5>
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel"><img src="<?= base_url('pictures') ?>/logos/kampus-logo.png" alt="Logo" srcset="" style="width: 200px; height: 45px; object-fit: contain;"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
@@ -82,33 +82,26 @@
                         <li class="nav-item">
                             <a class="nav-link mx-lg-2 <?= $menu == 'home' ? 'active' : '' ?>" aria-current="page" href="<?= base_url() ?>">Home</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link mx-lg-2 dropdown-toggle <?= $menu == 'keuangan' ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Keuangan
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?= base_url('Home/RekapKeuangan') ?>#kasinternal">Kas Internal</a></li>
-                                <li><a class="dropdown-item" href="<?= base_url('Home/RekapKeuangan') ?>#inventaris">Inventaris</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link mx-lg-2 <?= $menu == 'program' ? 'active' : '' ?>" href="<?= base_url('Home/Program') ?>">Program Studi</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mx-lg-2 <?= $menu == 'kegiatan' ? 'active' : '' ?>" href="<?= base_url('Home/Kegiatan') ?>">Pengumuman</a>
+                            <a class="nav-link mx-lg-2 <?= $menu == 'kegiatan' ? 'active' : '' ?>" href="<?= base_url('Home/Kegiatan') ?>">Kegiatan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mx-lg-2 <?= $menu == 'donasi' ? 'active' : '' ?>" href="<?= base_url('Home/Donasi') ?>">Donasi</a>
+                            <a class="nav-link mx-lg-2 <?= $menu == 'beasiswa' ? 'active' : '' ?>" href="<?= base_url('Home/Beasiswa') ?>">Beasiswa</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link mx-lg-2 <?= $menu == 'pengaduan' ? 'active' : '' ?>" href="<?= base_url('Home/Pengaduan') ?>">Pengaduan</a>
+                            <a class="nav-link mx-lg-2 <?= $menu == 'artikel' ? 'active' : '' ?>" href="<?= base_url('Home/Artikel') ?>">Artikel</a>
                         </li>
+
                         <li class="nav-item dropdown">
                             <a class="nav-link mx-lg-2 dropdown-toggle <?= $menu == 'tentang' ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Tentang
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?= base_url('Home/ProfilMasjid') ?>">Profil Masjid</a></li>
-                                <?php if (in_array(session()->get('level'), [1, 2])) : ?>
-                                    <li><a class="dropdown-item" href="<?= base_url('Admin') ?>">Dashboard</a></li>
-                                <?php endif; ?>
+                                <li><a class="dropdown-item" href="<?= base_url('Home/ProfilKampus') ?>">Profil Kampus</a></li>
+                                <li><a class="dropdown-item" href="<?= base_url('Home/Fasilitas') ?>">Fasilitas</a></li>
                                 <?php if (session()->get('user_id')) : ?>
                                     <li><a class="dropdown-item" href="<?= base_url('Auth/MyProfile') . '/' . session()->get('user_id') ?>">My Profile</a></li>
                                 <?php endif; ?>
@@ -118,6 +111,13 @@
                 </div>
             </div>
             <?php if (session()->get('user_id')): ?>
+                <?php if (in_array(session()->get('level'), [1, 2])) : ?>
+                    <a href="<?= base_url('Admin') ?>" class="login-button me-2"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                <?php elseif (session()->get('level') == 3) : ?>
+                    <a href="<?= base_url('Dashboard/Petugas') ?>" class="login-button me-2"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                <?php elseif (session()->get('level') == 4) : ?>
+                    <a href="<?= base_url('Dashboard/Mahasiswa') ?>" class="login-button me-2"><i class="fas fa-tachometer-alt me-1"></i>Portal</a>
+                <?php endif; ?>
                 <a href="<?= base_url('Auth/Logout') ?>" class="logout-button">Logout</a>
             <?php else: ?>
                 <a href="<?= base_url('Auth/Login') ?>" class="login-button">Login</a>
@@ -136,28 +136,29 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 footer-column">
-                    <h5 class="footer-title">MASJID <?= $web['nama_masjid'] ?></h5>
+                    <h5 class="footer-title">KAMPUS <?= $web['nama_kampus'] ?></h5>
                     <p class="footer-description">
-                        Mewujudkan Keseimbangan Spiritual dan Sosial
+                        Mewujudkan Pendidikan Berkualitas dan Inovasi Teknologi
                     </p>
                     <div class="social-links">
-                        <a href="https://www.facebook.com/masjidalmuhtaram/?locale=id_ID" class="social-link"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://www.youtube.com/watch?v=mjaw05ahdlw" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="col-md-4 footer-column">
                     <h5 class="footer-title">Link Cepat</h5>
                     <ul class="footer-links">
-                        <li><a href="<?= base_url('Home/RekapKeuangan') ?>">Keuangan</a></li>
-                        <li><a href="<?= base_url('Home/Kegiatan') ?>">Pengumuman</a></li>
-                        <li><a href="<?= base_url('Home/Donasi') ?>">Donasi</a></li>
-                        <li><a href="<?= base_url('Home/Pengaduan') ?>">Pengaduan</a></li>
+                        <li><a href="<?= base_url('Home/Program') ?>">Program Studi</a></li>
+                        <li><a href="<?= base_url('Home/Kegiatan') ?>">Kegiatan</a></li>
+                        <li><a href="<?= base_url('Home/Beasiswa') ?>">Beasiswa</a></li>
+                        <li><a href="<?= base_url('Home/Artikel') ?>">Artikel</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 footer-column">
                     <h5 class="footer-title">Kontak Kami</h5>
                     <ul class="contact-info">
-                        <li><i class="fas fa-map-marker-alt me-4"></i> <?= $web['alamat_masjid'] ?></li>
+                        <li><i class="fas fa-map-marker-alt me-4"></i> <?= $web['alamat_kampus'] ?></li>
                         <li><i class="fas fa-phone-square-alt me-4"></i> - </li>
                         <li><i class="fas fa-envelope me-4"></i> - </li>
                     </ul>
@@ -169,7 +170,7 @@
                 <div class="row">
                     <div class="col-12">
                         <p class="copyright-text">
-                            &copy; <?= date('Y') ?> MASJID <?= $web['nama_masjid'] ?>. All Rights Reserved.
+                            &copy; <?= date('Y') ?> KAMPUS <?= $web['nama_kampus'] ?>. All Rights Reserved.
                         </p>
                     </div>
                 </div>
@@ -177,7 +178,7 @@
         </div>
     </footer>
     <!-- Scroll to Top Section -->
-    <button id="scrollToTop" class="scroll-to-top" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px; border: none; border-radius: 50%; background-color: #ff9800; color: white; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+    <button id="scrollToTop" class="scroll-to-top" style="display: none; position: fixed; bottom: 20px; right: 20px; z-index: 1000; width: 50px; height: 50px; border: none; border-radius: 50%; background: linear-gradient(135deg, #dc2626, #ef4444); color: white; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="19" x2="12" y2="5"></line>
             <polyline points="5 12 12 5 19 12"></polyline>
@@ -277,7 +278,7 @@
 
     <style>
         .footer-section {
-            background-color: #ff9800;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
             color: #fff;
             padding: 60px 0 0;
             margin-top: 0px;
@@ -305,7 +306,7 @@
             bottom: 0;
             width: 50px;
             height: 2px;
-            background-color: #004d40;
+            background-color: #dc2626;
         }
 
         .footer-description {
@@ -332,7 +333,7 @@
         }
 
         .social-link:hover {
-            background-color: #004d40;
+            background-color: #dc2626;
             color: #fff;
             transform: translateY(-3px);
         }
@@ -354,7 +355,7 @@
         }
 
         .footer-links a:hover {
-            color: #004d40;
+            color: #dc2626;
             padding-left: 5px;
         }
 
@@ -372,11 +373,11 @@
 
         .contact-info li i {
             margin-right: 10px;
-            color: #004d40;
+            color: #dc2626;
         }
 
         .footer-bottom {
-            background-color: rgb(207, 124, 0);
+            background-color: #b91c1c;
             padding: 20px 0;
             margin-top: 10px;
         }
@@ -411,8 +412,8 @@
 
 <!-- 
 |======================================================|
-| * SISTEM INFORMASI MASJID AGUNG AL-MUHTARAM KAJEN    |
-| * Copyright © 2024 - MASJID AGUNG AL-MUHTARAM KAJEN  |
+| * SISTEM INFORMASI MANAJEMEN KAMPUS (SIMAK)         |
+| * Copyright © 2024 - UNIVERSITAS TEKNOLOGI INDONESIA |
 | * By MNV26x                                          |
 | * Github: https://github.com/naufallevi              |
 |======================================================|

@@ -1,16 +1,23 @@
 <?php
 
 /*
+ * This file is part of CodeIgniter 4 framework.
+ *
+ * (c) CodeIgniter Foundation <admin@codeigniter.com>
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+/*
  |--------------------------------------------------------------------------
  | ERROR DISPLAY
  |--------------------------------------------------------------------------
  | In development, we want to show as many errors as possible to help
  | make sure they don't make it to production. And save us hours of
  | painful debugging.
- |
- | If you set 'display_errors' to '1', CI4's detailed error report will show.
  */
-error_reporting(E_ALL);
+error_reporting(-1);
 ini_set('display_errors', '1');
 
 /*
@@ -32,3 +39,14 @@ defined('SHOW_DEBUG_BACKTRACE') || define('SHOW_DEBUG_BACKTRACE', true);
  | items. It can always be used within your own application too.
  */
 defined('CI_DEBUG') || define('CI_DEBUG', true);
+
+/*
+ |--------------------------------------------------------------------------
+ | Auto-detect Base URL
+ |--------------------------------------------------------------------------
+ */
+if (empty($_ENV['app.baseURL'])) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $_ENV['app.baseURL'] = $protocol . $host . '/';
+}

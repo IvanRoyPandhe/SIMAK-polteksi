@@ -15,8 +15,8 @@ $totalkasinternal = number_format($totalkasinternal);
 <div class="welcome-section text-white" data-animate="fadeInUp">
     <div class="d-flex flex-wrap justify-content-between align-items-center">
         <div class="mb-3 mb-md-0">
-            <h3 class="mb-3 text-white">Selamat Datang, <?= $user['nama'] ?></h3>
-            <p class="mb-0 text-white">Selamat datang di SIMAS AL-MUHTARAM - Sistem Informasi Pengelolaan Masjid</p>
+            <h3 class="mb-3 text-white">Selamat Datang, <?= $user['nama'] ?? 'Admin' ?></h3>
+            <p class="mb-0 text-white">Selamat datang di SIMAK - Sistem Informasi Manajemen Kampus</p>
         </div>
         <div class="text-end text-md-start">
             <p class="mb-1 text-white"><i class="far fa-calendar me-2"></i>
@@ -164,42 +164,24 @@ $totalkasinternal = number_format($totalkasinternal);
 </div>
 
 <div class="col-lg-6 col-12">
-    <div class="card donation-card" data-animate="scaleIn">
-        <div class="donation-header">
-            <h5 class="text-white mb-0">Donasi Masuk</h5>
-            <div class="donation-badge">
-                <a href="<?= base_url('Donasi/DonasiMasuk') ?>" class="text-white">
-                    <?= count($donasi) ?> Donasi
+    <div class="card beasiswa-card" data-animate="scaleIn">
+        <div class="beasiswa-header">
+            <h5 class="text-white mb-0">Beasiswa Aktif</h5>
+            <div class="beasiswa-badge">
+                <a href="<?= base_url('Beasiswa') ?>" class="text-white">
+                    Info Beasiswa
                 </a>
             </div>
         </div>
-        <div class="card-body p-2">
-            <?php if (empty($donasi)) : ?>
-                <div class="text-center py-3">
-                    <p class="text-muted mb-0">Tidak ada donasi masuk</p>
-                </div>
-            <?php else : ?>
-                <div class="table-responsive">
-                    <table class="table donation-table table-hover mb-0">
-                        <thead>
-                            <tr class="text-center">
-                                <th>Pengirim</th>
-                                <th>Jumlah</th>
-                                <th>Penerima</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($donasi as $key => $isi_donasi) : ?>
-                                <tr class="text-center">
-                                    <td><?= $isi_donasi['nama_rek_p'] ?></td>
-                                    <td>Rp. <?= number_format($isi_donasi['jumlah'], 0) ?></td>
-                                    <td><?= $isi_donasi['nama_rekening'] ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
+        <div class="card-body p-3">
+            <div class="text-center py-3">
+                <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+                <h6 class="text-muted">Sistem Beasiswa Kampus</h6>
+                <p class="small text-muted mb-0">Kelola informasi beasiswa untuk mahasiswa</p>
+                <a href="<?= base_url('Beasiswa') ?>" class="btn btn-primary btn-sm mt-2">
+                    <i class="fas fa-eye me-1"></i>Lihat Beasiswa
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -523,11 +505,11 @@ $totalkasinternal = number_format($totalkasinternal);
 
 <style>
     .welcome-section {
-        background: linear-gradient(135deg, #ea9a06 0%, #FFA500 100%);
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
         padding: 2rem;
         border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
     }
 
     @media (max-width: 576px) {
@@ -595,7 +577,7 @@ $totalkasinternal = number_format($totalkasinternal);
 
 <style>
     .complaint-card,
-    .donation-card {
+    .beasiswa-card {
         background-color: #f8f9fa;
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -603,13 +585,13 @@ $totalkasinternal = number_format($totalkasinternal);
     }
 
     .complaint-card:hover,
-    .donation-card:hover {
+    .beasiswa-card:hover {
         transform: translateY(-5px);
     }
 
     .complaint-header,
-    .donation-header {
-        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    .beasiswa-header {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         color: white;
         padding: 15px;
         border-top-left-radius: 12px;
@@ -620,7 +602,7 @@ $totalkasinternal = number_format($totalkasinternal);
     }
 
     .complaint-badge,
-    .donation-badge {
+    .beasiswa-badge {
         background-color: rgba(255, 255, 255, 0.2);
         padding: 5px 10px;
         border-radius: 20px;
@@ -636,21 +618,7 @@ $totalkasinternal = number_format($totalkasinternal);
         background-color: rgb(128, 151, 198);
     }
 
-    .donation-table {
-        margin-bottom: 0;
-    }
 
-    .donation-table thead {
-        background-color: #f1f3f5;
-    }
-
-    .donation-table tbody tr {
-        transition: background-color 0.3s ease;
-    }
-
-    .donation-table tbody tr:hover {
-        background-color: rgba(0, 123, 255, 0.05);
-    }
 
     @media (max-width: 768px) {
         .complaint-body {

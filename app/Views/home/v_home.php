@@ -14,8 +14,8 @@
 <section class="hero-section">
     <div class="container">
         <div class="hero-content">
-            <h1 class="hero-title animate-fade-up">SIMAS <span class="highlight">AL-MUHTARAM</span></h1>
-            <p class="hero-subtitle animate-fade-up delay-200">Memudahkan Pengelolaan Masjid, Layanan Jamaah, dan Menyebarkan Manfaat untuk Umat.</p>
+            <h1 class="hero-title animate-fade-up">SIMAK <span class="highlight">POLTEKSI</span></h1>
+            <p class="hero-subtitle animate-fade-up delay-200">Memudahkan Pengelolaan Kampus, Layanan Mahasiswa, dan Menyebarkan Informasi Akademik.</p>
             <div class="cta-wrapper animate-fade-up delay-300">
                 <a href="#artikel" class="cta-button">
                     Baca Artikel
@@ -29,96 +29,31 @@
     </div>
 </section>
 
-<!-- Jadwal Sholat -->
+<!-- Info Akademik -->
 <div class="container-fluid py-4 bg-light pb-2">
-    <div class="row align-items-center">
-        <div class="col-lg-3">
-            <div class="text-center text-lg-start mb-3 mb-lg-0">
-                <h4 class="mb-2"><i class="fas fa-clock me-2" style="color: #ff9800;"></i>Jadwal Sholat</h4>
+    <div class="row align-items-center justify-content-center">
+        <div class="col-lg-4">
+            <div class="text-center mb-3 mb-lg-0">
+                <h4 class="mb-2"><i class="fas fa-graduation-cap me-2" style="color: #dc2626;"></i>Info Akademik</h4>
                 <p class="fw-bold mb-0" style="color: #128C7E">
-                    <?= isset($jadwal_sholat['data']['jadwal']['tanggal']) ? $jadwal_sholat['data']['jadwal']['tanggal'] : 'N/A' ?>
+                    <?= $jadwal_akademik['semester_aktif'] ?>
                 </p>
                 <div class="text-muted">
-                    <i class="fas fa-map-marker-alt me-1"></i>
-                    <span><?= $jadwal_sholat['data']['lokasi'] ?></span>
+                    <i class="fas fa-calendar-alt me-1"></i>
+                    <span><?= $jadwal_akademik['minggu_ke'] ?></span>
                 </div>
             </div>
         </div>
-        <div class="col-lg-7">
-            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-6 g-3 text-center">
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-sun icon-gradient-info "></i>
-                        </div>
-                        <h6 class="mb-1">Imsak</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['imsak'] ?></p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-sun icon-gradient-info "></i>
-                        </div>
-                        <h6 class="mb-1">Subuh</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['subuh'] ?></p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-sun text-warning"></i>
-                        </div>
-                        <h6 class="mb-1">Dzuhur</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['dzuhur'] ?></p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-sun text-warning"></i>
-                        </div>
-                        <h6 class="mb-1">Ashar</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['ashar'] ?></p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-moon text-info"></i>
-                        </div>
-                        <h6 class="mb-1">Maghrib</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['maghrib'] ?></p>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="prayer-time animate-slide-right p-2">
-                        <div class="prayer-icon mb-2">
-                            <i class="fas fa-moon text-info"></i>
-                        </div>
-                        <h6 class="mb-1">Isya</h6>
-                        <p class="fw-bold mb-0" style="color: #128C7E"><?= $jadwal_sholat['data']['jadwal']['isya'] ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-2">
-            <div class="text-center text-white p-3 rounded-3 mt-3 mt-lg-0" style="background-color: #128C7E;">
-                <small class="d-block">Waktu Menuju</small>
-                <span class="fs-5 fw-bold" id="next-prayer"></span>
-                <div id="countdown" class="small"></div>
+        <div class="col-lg-4">
+            <div class="text-center text-white p-3 rounded-3" style="background-color: #128C7E;">
+                <small class="d-block">Tahun Akademik</small>
+                <span class="fs-5 fw-bold"><?= $jadwal_akademik['tahun_akademik'] ?></span>
+                <div class="small">Semester Aktif</div>
             </div>
         </div>
     </div>
 </div>
-<div class="container-fluid prayer-disclaimer bg-light">
-    <div class="col-12 text-center">
-        <small class="fst-italic">
-            <i class="fas fa-info-circle me-1"></i>
-            Jadwal sholat berdasarkan data <a href="https://api.myquran.com/" target="_blank">MyQuran.com</a> , perbedaan kecil mungkin terjadi
-        </small>
-    </div>
-</div>
+
 
 <!-- Bar Section -->
 <section class="bar-section-1 bg-light">
@@ -132,12 +67,12 @@
         <div class="announcement-text">
             <?php if (!empty($kegiatan)) : ?>
                 <?php foreach ($kegiatan as $key => $isi_kegiatan) : ?>
-                    <i class="fas fa-mosque announcement-icon"></i>
-                    <?= $isi_kegiatan['nama'] ?> (<?= $isi_kegiatan['tgl'] ?> (<?= $isi_kegiatan['jam'] ?> WIB))
+                    <i class="fas fa-university announcement-icon"></i>
+                    <?= $isi_kegiatan['judul'] ?> (<?= $isi_kegiatan['tgl'] ?> <?= isset($isi_kegiatan['waktu']) ? $isi_kegiatan['waktu'] : '' ?>)
                 <?php endforeach; ?>
                 <?php foreach ($pengumuman as $key => $isi_pengumuman) : ?>
                     <i class="fas fa-bullhorn announcement-icon"></i>
-                    <?= $isi_pengumuman['nama'] ?> (<?= $isi_pengumuman['tgl'] ?>)
+                    <?= $isi_pengumuman['judul'] ?> (<?= $isi_pengumuman['tgl'] ?>)
                 <?php endforeach; ?>
                 <i class="fa-solid fa-paperclip announcement-icon"></i>
                 Untuk detail cek halaman Pengumuman
@@ -170,7 +105,7 @@
                         <i class="fas fa-question-circle"></i>
                     </div>
                     <h3 class="service-title">Kelola Pengaduan</h3>
-                    <p class="service-description">Kelola pengaduan dengan cepat dan terstruktur untuk meningkatkan pelayanan di masjid.</p>
+                    <p class="service-description">Kelola pengaduan mahasiswa dengan cepat dan terstruktur untuk meningkatkan pelayanan di kampus.</p>
                     <a href="<?= base_url('Home/Pengaduan') ?>" class="service-link">Selengkapnya <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
@@ -179,8 +114,8 @@
                     <div class="service-icon">
                         <i class="fa-solid fa-wallet"></i>
                     </div>
-                    <h3 class="service-title">Keuangan</h3>
-                    <p class="service-description">Kelola dan pantau kas masjid secara transparan dan akuntabel. Laporan keuangan yang detail dan mudah diakses.</p>
+                    <h3 class="service-title">Keuangan Kampus</h3>
+                    <p class="service-description">Kelola dan pantau kas kampus secara transparan dan akuntabel. Laporan keuangan yang detail dan mudah diakses.</p>
                     <a href="<?= base_url('Home/RekapKeuangan') ?>" class="service-link">Selengkapnya <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
@@ -189,9 +124,9 @@
                     <div class="service-icon">
                         <i class="fas fa-hand-holding-medical"></i>
                     </div>
-                    <h3 class="service-title">Donasi Mudah</h3>
-                    <p class="service-description">Donasi kepada masjid secara online dengan beberapa metode pembayaran yang aman dan terpercaya.</p>
-                    <a href="<?= base_url('Home/Donasi') ?>" class="service-link">Selengkapnya <i class="fas fa-arrow-right ms-1"></i></a>
+                    <h3 class="service-title">Donasi & Beasiswa</h3>
+                    <p class="service-description">Donasi untuk kampus dan beasiswa mahasiswa secara online dengan metode pembayaran yang aman.</p>
+                    <a href="<?= base_url('Home/Beasiswa') ?>" class="service-link">Selengkapnya <i class="fas fa-arrow-right ms-1"></i></a>
                 </div>
             </div>
         </div>
@@ -211,11 +146,11 @@
             <h2 class="section-title">Artikel Terbaru</h2>
             <?php if (session()->get('user_id')) : ?>
                 <p class="section-subtitle">
-                    Temukan berbagai kegiatan, berita, dan artikel menarik seputar masjid.
+                    Temukan berbagai kegiatan, berita, dan artikel menarik seputar kampus.
                 </p>
             <?php else : ?>
                 <p class="section-subtitle">
-                    Temukan berbagai kegiatan, berita, dan artikel menarik seputar masjid.
+                    Temukan berbagai kegiatan, berita, dan artikel menarik seputar kampus.
                     (Jika ingin informasi lebih, silakan <a href="<?= base_url('Auth/Login') ?>">Login</a> untuk melihat artikel private)
                 </p>
             <?php endif; ?>
@@ -260,7 +195,7 @@
                             <div class="col-lg-4 col-md-6">
                                 <div class="article-card animate-fade-in">
                                     <div class="article-image">
-                                        <span class="article-category" style="background-color: #ff9800;"><?= $isi_artikel['nama_kategori'] ?></span>
+                                        <span class="article-category" style="background: linear-gradient(135deg, #dc2626, #ef4444);"><?= $isi_artikel['nama_kategori'] ?></span>
                                         <a href="<?= base_url('Home/DetailArtikel/') . $isi_artikel['slug'] ?>"><img src="<?= base_url('uploaded/thumbnail_artikel/' . $isi_artikel['thumbnail']) ?>" alt="<?= $isi_artikel['judul'] ?>" class="img-fluid"></a>
                                     </div>
                                     <div class="article-content">
@@ -324,96 +259,7 @@
     });
 </script>
 
-<script>
-    const jadwalSholat = {
-        Imsak: "<?= $jadwal_sholat['data']['jadwal']['imsak'] ?>",
-        Subuh: "<?= $jadwal_sholat['data']['jadwal']['subuh'] ?>",
-        Dzuhur: "<?= $jadwal_sholat['data']['jadwal']['dzuhur'] ?>",
-        Ashar: "<?= $jadwal_sholat['data']['jadwal']['ashar'] ?>",
-        Maghrib: "<?= $jadwal_sholat['data']['jadwal']['maghrib'] ?>",
-        Isya: "<?= $jadwal_sholat['data']['jadwal']['isya'] ?>"
-    };
 
-    function isValidTime(time) {
-        return time && time !== 'N/A' && time !== 'undefined' && time !== '';
-    }
-
-    function areValidPrayerTimes(schedule) {
-        return Object.values(schedule).every(time => isValidTime(time));
-    }
-
-    function getNextPrayerTime(currentTime, schedule) {
-        if (!areValidPrayerTimes(schedule)) {
-            return {
-                name: "N/A",
-                time: null
-            };
-        }
-        try {
-            const times = Object.entries(schedule).map(([name, time]) => ({
-                name,
-                time: new Date(`${new Date().toDateString()} ${time}`)
-            }));
-            const now = new Date(currentTime);
-            for (let i = 0; i < times.length; i++) {
-                if (now < times[i].time) {
-                    return times[i];
-                }
-            }
-            const nextDay = new Date(now);
-            nextDay.setDate(nextDay.getDate() + 1);
-            return {
-                name: "Subuh",
-                time: new Date(`${nextDay.toDateString()} ${schedule.Subuh}`)
-            };
-        } catch (error) {
-            return {
-                name: "N/A",
-                time: null
-            };
-        }
-    }
-
-    function startCountdown() {
-        const nextPrayerElement = document.getElementById("next-prayer");
-        const countdownElement = document.getElementById("countdown");
-        if (!areValidPrayerTimes(jadwalSholat)) {
-            nextPrayerElement.textContent = "N/A";
-            countdownElement.textContent = "--:--:--";
-            return;
-        }
-        const currentTime = new Date();
-        const nextPrayer = getNextPrayerTime(currentTime, jadwalSholat);
-        if (!nextPrayer || !nextPrayer.time) {
-            nextPrayerElement.textContent = "N/A";
-            countdownElement.textContent = "--:--:--";
-            return;
-        }
-        nextPrayerElement.textContent = nextPrayer.name;
-        let intervalId = null;
-
-        function updateCountdown() {
-            const now = new Date();
-            const diff = nextPrayer.time - now;
-            if (diff <= 0) {
-                clearInterval(intervalId);
-                startCountdown();
-                return;
-            }
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            countdownElement.textContent = `${hours.toString().padStart(2, "0")}:${minutes
-                .toString()
-                .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-        }
-        updateCountdown();
-        intervalId = setInterval(updateCountdown, 1000);
-    }
-    document.addEventListener("DOMContentLoaded", () => {
-        startCountdown();
-    });
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

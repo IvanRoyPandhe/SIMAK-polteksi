@@ -87,10 +87,21 @@ class Auth extends BaseController
                         'level'     => $idlevel,
                     ];
                     session()->set($simpan_session);
+                    
+                    // Debug log
+                    log_message('info', 'User login with level: ' . $idlevel);
+                    
+                    // Redirect berdasarkan level user
                     if ($idlevel == 1 || $idlevel == 2) {
-                        return redirect()->to(base_url('Admin'))->withInput();
-                    } else if ($idlevel == 3) {
-                        return redirect()->to(base_url())->withInput();
+                        return redirect()->to(base_url('Admin'));
+                    } elseif ($idlevel == 3) {
+                        return redirect()->to(base_url('Dashboard/Petugas'));
+                    } elseif ($idlevel == 4) {
+                        return redirect()->to(base_url('Dashboard/Mahasiswa'));
+                    } elseif ($idlevel == 5) {
+                        return redirect()->to(base_url('Dashboard/Dosen'));
+                    } else {
+                        return redirect()->to(base_url());
                     }
                 } else {
                     $sessError = [
@@ -183,12 +194,12 @@ class Auth extends BaseController
                 'nama'      => $nama,
                 'email'     => $email,
                 'password'  => $password,
-                'jabatan'   => 'Jemaah',
+                'jabatan'   => 'Mahasiswa',
                 'profil'    => 'avatar.png',
-                'level_id'  => 3,
+                'level_id'  => 4,
             ];
             $this->ModelUser->InsertUser($data);
-            session()->setFlashdata('info', 'User berhasil dibuat, silahkan login');
+            session()->setFlashdata('info', 'Akun mahasiswa berhasil dibuat, silahkan login');
             return redirect()->to(base_url('Auth/Login'));
         }
     }

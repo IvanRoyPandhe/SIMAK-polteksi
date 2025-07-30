@@ -154,7 +154,7 @@
 <div class="modal fade" id="modal-tambah">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header" style="background-color: #ff9800;">
+      <div class="modal-header" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
         <h5 class="modal-title"><?= $judul ?></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>

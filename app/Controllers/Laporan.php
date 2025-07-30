@@ -35,7 +35,7 @@ class Laporan extends BaseController
         $kategoriData = $this->ModelLaporan->getKategoriKeuangan();
         $kategoriList = [];
         foreach ($kategoriData as $kategori) {
-            $kategoriList[] = $kategori->kategori;
+            $kategoriList[] = $kategori->keterangan;
         }
         $data = [
             'judul'         => 'Laporan Kas Internal',

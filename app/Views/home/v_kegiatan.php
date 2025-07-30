@@ -6,7 +6,7 @@
 
 <div class="container my-4">
     <div class="card border-orange">
-        <div class="card-header bg-orange-light border-orange">
+        <div class="card-header text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);-light border-orange">
             <div class="d-flex align-items-center">
                 <i class="fas fa-mosque fa-2x text-orange me-3"></i>
                 <?php
@@ -25,7 +25,7 @@
             <div class="row">
                 <?php if (empty($kegiatan)): ?>
                     <div class="d-flex flex-column align-items-center">
-                        <i class="fas fa-info-circle fa-2x text-info mb-2" style="color: #fd7e14 !important;"></i>
+                        <i class="fas fa-info-circle fa-2x text-info mb-2" style="color: #dc2626 !important;"></i>
                         <span class="font-weight-bold">Data Tidak Tersedia</span>
                     </div>
                 <?php else: ?>
@@ -115,15 +115,15 @@
 <style>
     /* Kegiatan */
     .text-orange {
-        color: #fd7e14 !important;
+        color: #dc2626 !important;
     }
 
-    .bg-orange-light {
-        background-color: #fff7e6;
+    .text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);-light {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(239, 68, 68, 0.1));
     }
 
     .border-orange {
-        border-color: #fd7e14 !important;
+        border-color: #dc2626 !important;
     }
 
     .info-box {
@@ -136,7 +136,7 @@
     }
 
     .info-box-icon-orange {
-        background-color: #fd7e14;
+        background: linear-gradient(135deg, #dc2626, #ef4444);
         color: #fff;
         border-radius: 50%;
         width: 50px;
@@ -147,7 +147,7 @@
     }
 
     .info-box-content h6 {
-        color: #fd7e14;
+        color: #dc2626;
     }
 
     .progress-description i {
@@ -333,7 +333,7 @@
     }
 
     .info-box:hover .info-box-number {
-        color: #fd7e14;
+        color: #dc2626;
     }
 
     * {

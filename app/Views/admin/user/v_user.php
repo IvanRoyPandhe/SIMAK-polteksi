@@ -15,8 +15,9 @@
               <div class="col-12 col-md-2 mb-2">
                 <select name="level" id="levelSelect" class="custom-select w-100 form-control">
                   <option value="" <?= $level == '' ? 'selected' : '' ?>>Semua</option>
-                  <option value="takmir" <?= $level == 'takmir' ? 'selected' : '' ?>>Takmir Masjid</option>
-                  <option value="masyarakat" <?= $level == 'masyarakat' ? 'selected' : '' ?>>Masyarakat</option>
+                  <option value="admin" <?= $level == 'admin' ? 'selected' : '' ?>>Admin Kampus</option>
+                  <option value="petugas" <?= $level == 'petugas' ? 'selected' : '' ?>>Petugas</option>
+                  <option value="mahasiswa" <?= $level == 'mahasiswa' ? 'selected' : '' ?>>Mahasiswa</option>
                 </select>
               </div>
               <div class="col-12 col-md-3 mb-2">

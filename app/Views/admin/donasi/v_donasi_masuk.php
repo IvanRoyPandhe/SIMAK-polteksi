@@ -215,7 +215,7 @@
 <div class="modal fade" id="modal-tambah">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header" style="background-color: #ff9800;">
+      <div class="modal-header" style="background-color: #dc2626;">
         <h5 class="modal-title"><?= $judul ?></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
@@ -258,7 +258,7 @@
   <div class="modal fade" id="modal-edit<?= $isi_donasibarang['id_donasi'] ?>">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header bg-orange">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class="modal-title">Ubah <?= $judul ?></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -308,7 +308,7 @@
   <div class="modal fade" id="modal-lg-<?= $key ?>">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header justify-content-center bg-orange">
+        <div class="modal-header justify-content-center text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class=" modal-title">Bukti dari "<?= $isi_donasi['nama_rek_p'] ?>"</h4>
         </div>
         <div class="modal-body text-center">
@@ -327,7 +327,7 @@
   <div class="modal fade" id="db-modal-lg-<?= $key ?>">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header justify-content-center bg-orange">
+        <div class="modal-header justify-content-center text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class=" modal-title">Bukti dari "<?= $isi_donasibarang['nama_p'] ?>"</h4>
         </div>
         <div class="modal-body text-center">

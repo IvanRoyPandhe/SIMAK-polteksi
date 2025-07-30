@@ -111,7 +111,7 @@ $totalkasinternal = number_format($totalkasinternal);
 
 <div class="container my-4">
     <div class="card shadow-lg">
-        <div class="card-header text-white text-center" style="background-color: #fd7e14;">
+        <div class="card-header text-white text-center" style="background-color: #dc2626;">
             <h4 class="card-title mb-0 p-2"><?= $judul_inventaris ?></h4>
         </div>
         <div class="card-body">

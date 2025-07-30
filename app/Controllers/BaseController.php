@@ -43,6 +43,14 @@ abstract class BaseController extends Controller
         $user_id = $session->get('user_id');
         if ($user_id) {
             $this->user = model('App\Models\ModelAdmin')->getUserById($user_id);
+            
+            // Set mahasiswa_id dan dosen_id ke session jika belum ada
+            if ($this->user && !$session->get('mahasiswa_id') && isset($this->user['mahasiswa_id'])) {
+                $session->set('mahasiswa_id', $this->user['mahasiswa_id']);
+            }
+            if ($this->user && !$session->get('dosen_id') && isset($this->user['dosen_id'])) {
+                $session->set('dosen_id', $this->user['dosen_id']);
+            }
         }
     }
 }

@@ -130,7 +130,7 @@
 <div class="modal fade" id="modal-tambah">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header bg-orange">
+      <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
         <h4 class="modal-title">Tambah <?= $judul ?></h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>

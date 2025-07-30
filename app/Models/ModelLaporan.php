@@ -112,9 +112,9 @@ class ModelLaporan extends Model
     public function getKategoriKeuangan()
     {
         return $this->db->table('tb_keuangan_internal')
-            ->select('kategori')
+            ->select('keterangan')
             ->distinct()
-            ->orderBy('kategori', 'ASC')
+            ->orderBy('keterangan', 'ASC')
             ->get()->getResult();
     }
 

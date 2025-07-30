@@ -14,9 +14,11 @@ class ModelUser extends Model
         $this->select('tb_users.*, tb_level_user.nama_level')
             ->join('tb_level_user', 'tb_level_user.id_level = tb_users.level_id');
         if ($level) {
-            if ($level == 'takmir') {
+            if ($level == 'admin') {
                 $this->whereIn('tb_users.level_id', [1, 2]);
-            } elseif ($level == 'masyarakat') {
+            } elseif ($level == 'mahasiswa') {
+                $this->where('tb_users.level_id', 4);
+            } elseif ($level == 'petugas') {
                 $this->where('tb_users.level_id', 3);
             }
         }

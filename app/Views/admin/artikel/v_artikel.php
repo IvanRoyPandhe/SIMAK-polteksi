@@ -119,7 +119,7 @@
   <div class="modal fade" id="modal-detail<?= $isi_artikel['id_artikel'] ?>">
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <div class="modal-header bg-orange">
+        <div class="modal-header text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
           <h4 class="modal-title"><?= $isi_artikel['judul'] ?></h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>

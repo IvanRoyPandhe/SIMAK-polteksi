@@ -22,12 +22,15 @@ class KasInternal extends BaseController
     public function index()
     {
         $data = [
-            'judul'     => 'Rekapitulasi Kas Internal',
+            'judul'     => 'Dashboard Keuangan Internal',
             'subjudul'  => '',
             'menu'      => 'kas-internal',
-            'submenu'   => 'rekap-kas-internal',
-            'page'      => 'admin/kas-internal/v_rekap_kas_internal',
-            'kas'       => $this->ModelKasInternal->AllData(),
+            'submenu'   => 'dashboard-keuangan',
+            'page'      => 'admin/keuangan/v_dashboard_keuangan',
+            'stats'     => $this->ModelAdmin->getKeuanganStats(),
+            'top_kategori' => $this->ModelAdmin->getTopKategoriPengeluaran(),
+            'cashflow_trend' => $this->ModelAdmin->getCashFlowTrend(),
+            'recent_transactions' => $this->ModelAdmin->AllDataKasInternal(),
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
@@ -380,5 +383,117 @@ class KasInternal extends BaseController
             session()->setFlashdata('info', 'Dana keluar berhasil dihapus!');
             return redirect()->to(base_url('KasInternal/DanaKeluar'));
         }
+    }
+
+    public function Anggaran()
+    {
+        $data = [
+            'judul'     => 'Manajemen Anggaran',
+            'menu'      => 'kas-internal',
+            'submenu'   => 'anggaran',
+            'page'      => 'admin/keuangan/v_anggaran',
+            'anggaran'  => $this->getAnggaranData(),
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    public function RekeningBank()
+    {
+        $data = [
+            'judul'     => 'Manajemen Rekening Bank',
+            'menu'      => 'kas-internal',
+            'submenu'   => 'rekening-bank',
+            'page'      => 'admin/keuangan/v_rekening_bank',
+            'rekening'  => $this->getRekeningData(),
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    public function Kategori()
+    {
+        $data = [
+            'judul'     => 'Kategori Keuangan',
+            'menu'      => 'kas-internal',
+            'submenu'   => 'kategori-keuangan',
+            'page'      => 'admin/keuangan/v_kategori',
+            'kategori'  => $this->getKategoriData(),
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    public function Laporan()
+    {
+        $data = [
+            'judul'     => 'Laporan Keuangan',
+            'menu'      => 'kas-internal',
+            'submenu'   => 'laporan-keuangan',
+            'page'      => 'admin/keuangan/v_laporan',
+            'periode'   => $this->request->getGet('periode') ?? date('Y-m'),
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    private function getAnggaranData()
+    {
+        $db = \Config\Database::connect();
+        return $db->table('tb_anggaran')
+            ->join('tb_kategori_keuangan', 'tb_kategori_keuangan.id_kategori = tb_anggaran.kategori_id')
+            ->join('tb_periode_akademik', 'tb_periode_akademik.id_periode = tb_anggaran.periode_id')
+            ->select('tb_anggaran.*, tb_kategori_keuangan.nama_kategori, tb_periode_akademik.semester, tb_periode_akademik.tahun_akademik')
+            ->orderBy('tb_anggaran.created_at', 'DESC')
+            ->get()->getResultArray();
+    }
+
+    private function getRekeningData()
+    {
+        $db = \Config\Database::connect();
+        return $db->table('tb_rekening_bank')
+            ->where('is_active', 1)
+            ->orderBy('nama_bank')
+            ->get()->getResultArray();
+    }
+
+    private function getKategoriData()
+    {
+        $db = \Config\Database::connect();
+        return $db->table('tb_kategori_keuangan')
+            ->where('is_active', 1)
+            ->orderBy('jenis')
+            ->orderBy('nama_kategori')
+            ->get()->getResultArray();
+    }
+
+    public function ApproveTransaction($id)
+    {
+        $db = \Config\Database::connect();
+        $db->table('tb_keuangan_internal')
+            ->where('id_keuangan_internal', $id)
+            ->update([
+                'status_approval' => 'Approved',
+                'approved_by' => session()->get('user_id'),
+                'approved_at' => date('Y-m-d H:i:s')
+            ]);
+        
+        session()->setFlashdata('info', 'Transaksi berhasil disetujui!');
+        return redirect()->to(base_url('KasInternal'));
+    }
+
+    public function RejectTransaction($id)
+    {
+        $db = \Config\Database::connect();
+        $db->table('tb_keuangan_internal')
+            ->where('id_keuangan_internal', $id)
+            ->update([
+                'status_approval' => 'Rejected',
+                'approved_by' => session()->get('user_id'),
+                'approved_at' => date('Y-m-d H:i:s')
+            ]);
+        
+        session()->setFlashdata('info', 'Transaksi ditolak!');
+        return redirect()->to(base_url('KasInternal'));
     }
 }
