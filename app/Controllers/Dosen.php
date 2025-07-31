@@ -4,15 +4,21 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\ModelDosen;
+use App\Models\ModelUser;
 
 class Dosen extends BaseController
 {
     protected $ModelDosen;
+    protected $user;
 
     public function __construct()
     {
         $this->ModelDosen = new ModelDosen();
         helper(['form', 'url']);
+        
+        // Get user data from session
+        $userModel = new \App\Models\ModelUser();
+        $this->user = $userModel->find(session()->get('user_id'));
     }
 
     public function index()
@@ -68,7 +74,24 @@ class Dosen extends BaseController
                 'status'    => esc($this->request->getPost('status')),
             ];
             $this->ModelDosen->InsertData($data);
-            session()->setFlashdata('info', 'Data dosen berhasil ditambahkan');
+            
+            // Auto create user account
+            $userModel = new ModelUser();
+            $existingUser = $userModel->where('email', $data['email'])->first();
+            
+            if (!$existingUser) {
+                $userData = [
+                    'nama' => $data['nama'],
+                    'email' => $data['email'],
+                    'password' => password_hash('123456', PASSWORD_DEFAULT),
+                    'jabatan' => 'Dosen',
+                    'profil' => 'avatar.png',
+                    'level_id' => 5
+                ];
+                $userModel->InsertUser($userData);
+            }
+            
+            session()->setFlashdata('info', 'Data dosen berhasil ditambahkan dan akun user dibuat otomatis');
             return redirect()->to(base_url('Dosen'));
         } else {
             session()->setFlashdata('errors', $validation->getErrors());
@@ -114,7 +137,24 @@ class Dosen extends BaseController
                 'status'    => esc($this->request->getPost('status')),
             ];
             $this->ModelDosen->UpdateData($id_dosen, $data);
-            session()->setFlashdata('info', 'Data dosen berhasil diupdate');
+            
+            // Auto create user account if email changed
+            $userModel = new ModelUser();
+            $existingUser = $userModel->where('email', $data['email'])->first();
+            
+            if (!$existingUser) {
+                $userData = [
+                    'nama' => $data['nama'],
+                    'email' => $data['email'],
+                    'password' => password_hash('123456', PASSWORD_DEFAULT),
+                    'jabatan' => 'Dosen',
+                    'profil' => 'avatar.png',
+                    'level_id' => 5
+                ];
+                $userModel->InsertUser($userData);
+            }
+            
+            session()->setFlashdata('info', 'Data dosen berhasil diupdate dan akun user dibuat otomatis');
             return redirect()->to(base_url('Dosen'));
         } else {
             session()->setFlashdata('errors', $validation->getErrors());

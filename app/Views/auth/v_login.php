@@ -132,9 +132,7 @@
                         <button class="btn btn-lg w-100 fs-6" style="background-color: #dc2626;" type="submit">Login</button>
                     </div>
                     <?php form_close() ?>
-                    <div class="row">
-                        <small>Jika belum memiliki akun silahkan <a href="<?= base_url('Auth/Register') ?>">Register disini</a></small>
-                    </div>
+
                     <div class="row mt-3">
                         <div class="text-center">
                             <a href="<?= base_url() ?>" class="btn btn-outline-secondary btn-sm px-4 py-2">

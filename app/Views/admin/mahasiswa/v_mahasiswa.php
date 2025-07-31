@@ -15,9 +15,14 @@
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="card-title">Data Mahasiswa</h4>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
-                    <i class="fas fa-plus"></i> Tambah Mahasiswa
-                </button>
+                <div>
+                    <a href="<?= base_url('Mahasiswa/Import') ?>" class="btn btn-success me-2">
+                        <i class="fas fa-file-import"></i> Import Data
+                    </a>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahModal">
+                        <i class="fas fa-plus"></i> Tambah Mahasiswa
+                    </button>
+                </div>
             </div>
         </div>
         <div class="card-body">

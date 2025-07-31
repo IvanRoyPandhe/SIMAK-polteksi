@@ -8,6 +8,7 @@ class ModelUser extends Model
 {
     protected $table = 'tb_users';
     protected $primaryKey = 'id_user';
+    protected $allowedFields = ['nama', 'email', 'password', 'jabatan', 'profil', 'level_id'];
 
     public function getUserLevel($level = null, $search = null)
     {

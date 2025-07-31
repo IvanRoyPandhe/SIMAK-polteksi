@@ -213,6 +213,12 @@
                                     <span>Data Dosen</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item <?= $menu == 'prodi' ? 'active' : '' ?>">
+                                <a href=" <?= base_url('Prodi') ?>" class='sidebar-link'>
+                                    <i class="fas fa-university"></i>
+                                    <span>Program Studi</span>
+                                </a>
+                            </li>
                             <?php endif; ?>
                             <li class="sidebar-item <?= $menu == 'beasiswa' ? 'active' : '' ?>">
                                 <a href=" <?= base_url('Beasiswa') ?>" class='sidebar-link'>
@@ -435,14 +441,20 @@
                                 <span>Bimbingan Akademik</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a href="#" class='sidebar-link'>
+                        <li class="sidebar-item <?= $menu == 'mata-kuliah' ? 'active' : '' ?>">
+                            <a href="<?= base_url('dosen/mata-kuliah') ?>" class='sidebar-link'>
+                                <i class="fas fa-book"></i>
+                                <span>Mata Kuliah Saya</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'materi-kuliah' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/MateriKuliah') ?>" class='sidebar-link'>
                                 <i class="fas fa-upload"></i>
                                 <span>Materi Kuliah</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
-                            <a href="#" class='sidebar-link'>
+                        <li class="sidebar-item <?= $menu == 'laporan' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/Laporan') ?>" class='sidebar-link'>
                                 <i class="fas fa-chart-bar"></i>
                                 <span>Laporan</span>
                             </a>
@@ -797,6 +809,10 @@
                     case 'periode':
                         message = `Periode "${name}" akan dihapus!`;
                         url = `<?= base_url('PeriodeAkademik/Delete/') ?>/${id}`;
+                        break;
+                    case 'prodi':
+                        message = `Program studi "${name}" akan dihapus!`;
+                        url = `<?= base_url('Prodi/delete/') ?>/${id}`;
                         break;
                     default:
                         console.log('Tipe data tidak dikenal');

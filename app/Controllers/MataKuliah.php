@@ -2,146 +2,134 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
 use App\Models\ModelMataKuliah;
+use App\Models\ModelDosen;
+use App\Models\ModelProdi;
 
 class MataKuliah extends BaseController
 {
     protected $ModelMataKuliah;
+    protected $ModelDosen;
+    protected $ModelProdi;
 
     public function __construct()
     {
         $this->ModelMataKuliah = new ModelMataKuliah();
+        $this->ModelDosen = new ModelDosen();
+        $this->ModelProdi = new ModelProdi();
     }
 
     public function index()
     {
+        try {
+            $mata_kuliah = $this->ModelMataKuliah->getAllWithDosen();
+            $prodi = $this->ModelProdi->findAll();
+            
+            $data = [
+                'judul' => 'Data Mata Kuliah',
+                'menu' => 'mata_kuliah',
+                'submenu' => '',
+                'page' => 'admin/mata_kuliah/index',
+                'mata_kuliah' => $mata_kuliah ?: [],
+                'prodi' => $prodi ?: []
+            ];
+            $data['user'] = $this->user;
+            return view('v_template_admin', $data);
+        } catch (\Exception $e) {
+            log_message('error', 'MataKuliah index error: ' . $e->getMessage());
+            return redirect()->to('/admin')->with('error', 'Terjadi kesalahan saat memuat data mata kuliah');
+        }
+    }
+
+    public function create()
+    {
+        try {
+            $data = [
+                'judul' => 'Tambah Mata Kuliah',
+                'menu' => 'mata_kuliah',
+                'submenu' => '',
+                'page' => 'admin/mata_kuliah/create',
+                'prodi' => $this->ModelProdi->findAll(),
+                'dosen' => $this->ModelDosen->findAll()
+            ];
+            $data['user'] = $this->user;
+            return view('v_template_admin', $data);
+        } catch (\Exception $e) {
+            return redirect()->to('/admin/mata-kuliah')->with('error', 'Terjadi kesalahan');
+        }
+    }
+
+    public function store()
+    {
         $data = [
-            'judul'     => 'Mata Kuliah',
-            'menu'      => 'akademik',
-            'submenu'   => 'mata-kuliah',
-            'page'      => 'admin/v_mata_kuliah',
-            'matkul'    => $this->ModelMataKuliah->AllData(),
+            'kode_matkul' => $this->request->getPost('kode_matkul'),
+            'nama_matkul' => $this->request->getPost('nama_matkul'),
+            'prodi_id' => $this->request->getPost('prodi_id'),
+            'kurikulum_id' => $this->request->getPost('prodi_id'), // Same as prodi_id for simplicity
+            'jenis' => $this->request->getPost('jenis'),
+            'sks' => $this->request->getPost('sks'),
+            'semester' => $this->request->getPost('semester'),
+            'dosen_id' => $this->request->getPost('dosen_id')
         ];
-        $data['user'] = $this->user;
-        return view('v_template_admin', $data);
+
+        $this->ModelMataKuliah->insert($data);
+        session()->setFlashdata('success', 'Mata kuliah berhasil ditambahkan');
+        return redirect()->to('/admin/mata-kuliah');
     }
 
-    public function InsertData()
+    public function edit($id)
     {
-        if ($this->validate([
-            'kode_matkul' => [
-                'label' => 'Kode Mata Kuliah',
-                'rules' => 'required|max_length[10]|is_unique[tb_mata_kuliah.kode_matkul]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} maksimal 10 karakter',
-                    'is_unique' => '{field} sudah ada',
-                ]
-            ],
-            'nama_matkul' => [
-                'label' => 'Nama Mata Kuliah',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} maksimal 100 karakter',
-                ]
-            ],
-            'sks' => [
-                'label' => 'SKS',
-                'rules' => 'required|numeric|greater_than[0]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'numeric' => '{field} harus berupa angka',
-                    'greater_than' => '{field} harus lebih dari 0',
-                ]
-            ],
-            'semester' => [
-                'label' => 'Semester',
-                'rules' => 'required|numeric|greater_than[0]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'numeric' => '{field} harus berupa angka',
-                    'greater_than' => '{field} harus lebih dari 0',
-                ]
-            ],
-        ])) {
+        try {
+            $mata_kuliah = $this->ModelMataKuliah->find($id);
+            if (!$mata_kuliah) {
+                return redirect()->to('/admin/mata-kuliah')->with('error', 'Data tidak ditemukan');
+            }
+            
             $data = [
-                'kode_matkul' => esc($this->request->getPost('kode_matkul')),
-                'nama_matkul' => esc($this->request->getPost('nama_matkul')),
-                'prodi_id' => esc($this->request->getPost('prodi_id')),
-                'kurikulum_id' => esc($this->request->getPost('kurikulum_id')),
-                'jenis' => esc($this->request->getPost('jenis')),
-                'sks' => esc($this->request->getPost('sks')),
-                'semester' => esc($this->request->getPost('semester')),
+                'judul' => 'Edit Mata Kuliah',
+                'menu' => 'mata_kuliah',
+                'submenu' => '',
+                'page' => 'admin/mata_kuliah/edit',
+                'mata_kuliah' => $mata_kuliah,
+                'prodi' => $this->ModelProdi->findAll(),
+                'dosen' => $this->ModelDosen->findAll()
             ];
-            $this->ModelMataKuliah->InsertData($data);
-            session()->setFlashdata('info', 'Data mata kuliah berhasil ditambahkan!');
-            return redirect()->to(base_url('MataKuliah'));
-        } else {
-            session()->setFlashdata('errors', $this->validator->getErrors());
-            return redirect()->to(base_url('MataKuliah'))->withInput();
+            $data['user'] = $this->user;
+            return view('v_template_admin', $data);
+        } catch (\Exception $e) {
+            return redirect()->to('/admin/mata-kuliah')->with('error', 'Terjadi kesalahan');
         }
     }
 
-    public function UpdateData($id_matkul)
+    public function update($id)
     {
-        if ($this->validate([
-            'kode_matkul' => [
-                'label' => 'Kode Mata Kuliah',
-                'rules' => 'required|max_length[10]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} maksimal 10 karakter',
-                ]
-            ],
-            'nama_matkul' => [
-                'label' => 'Nama Mata Kuliah',
-                'rules' => 'required|max_length[100]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} maksimal 100 karakter',
-                ]
-            ],
-            'sks' => [
-                'label' => 'SKS',
-                'rules' => 'required|numeric|greater_than[0]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'numeric' => '{field} harus berupa angka',
-                    'greater_than' => '{field} harus lebih dari 0',
-                ]
-            ],
-            'semester' => [
-                'label' => 'Semester',
-                'rules' => 'required|numeric|greater_than[0]',
-                'errors' => [
-                    'required' => '{field} tidak boleh kosong',
-                    'numeric' => '{field} harus berupa angka',
-                    'greater_than' => '{field} harus lebih dari 0',
-                ]
-            ],
-        ])) {
-            $data = [
-                'id_matkul' => $id_matkul,
-                'kode_matkul' => esc($this->request->getPost('kode_matkul')),
-                'nama_matkul' => esc($this->request->getPost('nama_matkul')),
-                'sks' => esc($this->request->getPost('sks')),
-                'semester' => esc($this->request->getPost('semester')),
-            ];
-            $this->ModelMataKuliah->UpdateData($data);
-            session()->setFlashdata('info', 'Data mata kuliah berhasil diubah!');
-            return redirect()->to(base_url('MataKuliah'));
-        } else {
-            session()->setFlashdata('errors', $this->validator->getErrors());
-            return redirect()->to(base_url('MataKuliah'))->withInput();
-        }
+        $data = [
+            'kode_matkul' => $this->request->getPost('kode_matkul'),
+            'nama_matkul' => $this->request->getPost('nama_matkul'),
+            'prodi_id' => $this->request->getPost('prodi_id'),
+            'kurikulum_id' => $this->request->getPost('prodi_id'),
+            'jenis' => $this->request->getPost('jenis'),
+            'sks' => $this->request->getPost('sks'),
+            'semester' => $this->request->getPost('semester'),
+            'dosen_id' => $this->request->getPost('dosen_id')
+        ];
+
+        $this->ModelMataKuliah->update($id, $data);
+        session()->setFlashdata('success', 'Mata kuliah berhasil diupdate');
+        return redirect()->to('/admin/mata-kuliah');
     }
 
-    public function Delete($id_matkul)
+    public function delete($id)
     {
-        $this->ModelMataKuliah->DeleteData($id_matkul);
-        session()->setFlashdata('info', 'Data mata kuliah berhasil dihapus!');
-        return redirect()->to(base_url('MataKuliah'));
+        $this->ModelMataKuliah->delete($id);
+        session()->setFlashdata('success', 'Mata kuliah berhasil dihapus');
+        return redirect()->to('/admin/mata-kuliah');
+    }
+
+    public function getDosenByProdi()
+    {
+        $prodi_id = $this->request->getPost('prodi_id');
+        $dosen = $this->ModelDosen->where('prodi_id', $prodi_id)->findAll();
+        return $this->response->setJSON($dosen);
     }
 }

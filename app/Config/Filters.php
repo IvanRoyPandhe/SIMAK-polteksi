@@ -37,6 +37,7 @@ class Filters extends BaseFilters
         'filteradmin'       => \App\Filters\FilterAdmin::class,
         'filterpetugas'     => \App\Filters\FilterPetugas::class,
         'filtermasyarakat'  => \App\Filters\FilterMasyarakat::class,
+        'filterdosen'       => \App\Filters\FilterDosen::class,
     ];
 
     /**

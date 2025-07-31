@@ -4,15 +4,21 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\ModelMahasiswa;
+use App\Models\ModelUser;
 
 class Mahasiswa extends BaseController
 {
     protected $ModelMahasiswa;
+    protected $user;
 
     public function __construct()
     {
         $this->ModelMahasiswa = new ModelMahasiswa();
         helper(['form', 'url']);
+        
+        // Get user data from session
+        $userModel = new \App\Models\ModelUser();
+        $this->user = $userModel->find(session()->get('user_id'));
     }
 
     public function index()
@@ -58,26 +64,43 @@ class Mahasiswa extends BaseController
                     'is_unique' => '{field} sudah terdaftar',
                 ]
             ],
-            'jurusan' => [
-                'label' => 'Jurusan',
-                'rules' => 'required|max_length[100]',
+            'prodi_id' => [
+                'label' => 'Program Studi',
+                'rules' => 'required|integer',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} maksimal 100 karakter',
+                    'integer' => '{field} harus berupa angka',
                 ]
             ],
         ])) {
             $data = [
-                'nim'       => esc($this->request->getPost('nim')),
-                'nama'      => esc($this->request->getPost('nama')),
-                'email'     => esc($this->request->getPost('email')),
-                'jurusan'   => esc($this->request->getPost('jurusan')),
-                'semester'  => esc($this->request->getPost('semester')),
-                'angkatan'  => esc($this->request->getPost('angkatan')),
-                'status'    => esc($this->request->getPost('status')),
+                'nim'            => esc($this->request->getPost('nim')),
+                'nama'           => esc($this->request->getPost('nama')),
+                'email'          => esc($this->request->getPost('email')),
+                'prodi_id'       => esc($this->request->getPost('prodi_id')),
+                'semester'       => esc($this->request->getPost('semester')),
+                'tahun_angkatan' => esc($this->request->getPost('tahun_angkatan')),
+                'status'         => esc($this->request->getPost('status')),
             ];
-            $this->ModelMahasiswa->InsertData($data);
-            session()->setFlashdata('info', 'Data mahasiswa berhasil ditambahkan');
+            $mahasiswaId = $this->ModelMahasiswa->InsertData($data);
+            
+            // Auto create user account
+            $userModel = new ModelUser();
+            $existingUser = $userModel->where('email', $data['email'])->first();
+            
+            if (!$existingUser) {
+                $userData = [
+                    'nama' => $data['nama'],
+                    'email' => $data['email'],
+                    'password' => password_hash('123456', PASSWORD_DEFAULT),
+                    'jabatan' => 'Mahasiswa',
+                    'profil' => 'avatar.png',
+                    'level_id' => 4
+                ];
+                $userModel->InsertUser($userData);
+            }
+            
+            session()->setFlashdata('info', 'Data mahasiswa berhasil ditambahkan dan akun user dibuat otomatis');
             return redirect()->to(base_url('Mahasiswa'));
         } else {
             session()->setFlashdata('errors', $validation->getErrors());
@@ -115,16 +138,33 @@ class Mahasiswa extends BaseController
             ],
         ])) {
             $data = [
-                'nim'       => esc($this->request->getPost('nim')),
-                'nama'      => esc($this->request->getPost('nama')),
-                'email'     => esc($this->request->getPost('email')),
-                'jurusan'   => esc($this->request->getPost('jurusan')),
-                'semester'  => esc($this->request->getPost('semester')),
-                'angkatan'  => esc($this->request->getPost('angkatan')),
-                'status'    => esc($this->request->getPost('status')),
+                'nim'            => esc($this->request->getPost('nim')),
+                'nama'           => esc($this->request->getPost('nama')),
+                'email'          => esc($this->request->getPost('email')),
+                'prodi_id'       => esc($this->request->getPost('prodi_id')),
+                'semester'       => esc($this->request->getPost('semester')),
+                'tahun_angkatan' => esc($this->request->getPost('tahun_angkatan')),
+                'status'         => esc($this->request->getPost('status')),
             ];
             $this->ModelMahasiswa->UpdateData($id_mahasiswa, $data);
-            session()->setFlashdata('info', 'Data mahasiswa berhasil diupdate');
+            
+            // Auto create user account if email changed
+            $userModel = new ModelUser();
+            $existingUser = $userModel->where('email', $data['email'])->first();
+            
+            if (!$existingUser) {
+                $userData = [
+                    'nama' => $data['nama'],
+                    'email' => $data['email'],
+                    'password' => password_hash('123456', PASSWORD_DEFAULT),
+                    'jabatan' => 'Mahasiswa',
+                    'profil' => 'avatar.png',
+                    'level_id' => 4
+                ];
+                $userModel->InsertUser($userData);
+            }
+            
+            session()->setFlashdata('info', 'Data mahasiswa berhasil diupdate dan akun user dibuat otomatis');
             return redirect()->to(base_url('Mahasiswa'));
         } else {
             session()->setFlashdata('errors', $validation->getErrors());
@@ -198,5 +238,178 @@ class Mahasiswa extends BaseController
             session()->setFlashdata('errors', $validation->getErrors());
             return redirect()->to(base_url('Mahasiswa/Biodata/' . $id_mahasiswa))->withInput();
         }
+    }
+
+    public function Import()
+    {
+        $data = [
+            'judul' => 'Import Data Mahasiswa',
+            'menu' => 'mahasiswa',
+            'submenu' => '',
+            'page' => 'admin/mahasiswa/v_import_mahasiswa',
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    public function ProcessImport()
+    {
+        $file = $this->request->getFile('file_import');
+        
+        if (!$file->isValid()) {
+            session()->setFlashdata('error', 'File tidak valid');
+            return redirect()->to(base_url('Mahasiswa/Import'));
+        }
+
+        $extension = $file->getClientExtension();
+        if (!in_array($extension, ['csv', 'xlsx', 'xls'])) {
+            session()->setFlashdata('error', 'Format file harus CSV atau Excel');
+            return redirect()->to(base_url('Mahasiswa/Import'));
+        }
+
+        $fileName = $file->getRandomName();
+        $file->move('uploaded/import/', $fileName);
+        $filePath = 'uploaded/import/' . $fileName;
+
+        try {
+            $data = [];
+            
+            if ($extension === 'csv') {
+                $data = $this->readCSV($filePath);
+            } else {
+                $data = $this->readExcel($filePath);
+            }
+
+            $success = 0;
+            $errors = [];
+            
+            foreach ($data as $index => $row) {
+                if ($this->insertMahasiswaWithUser($row, $index + 2)) {
+                    $success++;
+                } else {
+                    $errors[] = "Baris " . ($index + 2) . ": Data tidak valid";
+                }
+            }
+
+            unlink($filePath);
+            
+            $message = "Berhasil import $success data mahasiswa";
+            if (!empty($errors)) {
+                $message .= ". Error: " . implode(', ', array_slice($errors, 0, 3));
+                if (count($errors) > 3) $message .= " dan " . (count($errors) - 3) . " error lainnya";
+            }
+            
+            session()->setFlashdata('info', $message);
+            return redirect()->to(base_url('Mahasiswa'));
+            
+        } catch (\Exception $e) {
+            if (file_exists($filePath)) unlink($filePath);
+            session()->setFlashdata('error', 'Error: ' . $e->getMessage());
+            return redirect()->to(base_url('Mahasiswa/Import'));
+        }
+    }
+
+    private function readCSV($filePath)
+    {
+        $data = [];
+        if (($handle = fopen($filePath, "r")) !== FALSE) {
+            $header = fgetcsv($handle, 1000, ",");
+            while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                if (count($row) >= 6) {
+                    $data[] = [
+                        'nim' => trim($row[0]),
+                        'nama' => trim($row[1]),
+                        'email' => trim($row[2]),
+                        'prodi_id' => trim($row[3]),
+                        'tahun_angkatan' => trim($row[4]),
+                        'semester' => trim($row[5])
+                    ];
+                }
+            }
+            fclose($handle);
+        }
+        return $data;
+    }
+
+    private function readExcel($filePath)
+    {
+        // Implementasi sederhana untuk Excel - dalam production gunakan PhpSpreadsheet
+        throw new \Exception('Excel import belum diimplementasi. Gunakan format CSV.');
+    }
+
+    private function insertMahasiswaWithUser($row, $lineNumber)
+    {
+        if (empty($row['nim']) || empty($row['nama']) || empty($row['email'])) {
+            return false;
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // Cek apakah mahasiswa sudah ada
+            $existingMahasiswa = $this->ModelMahasiswa->where('nim', $row['nim'])->first();
+            if ($existingMahasiswa) {
+                $db->transRollback();
+                return false;
+            }
+
+            // Insert mahasiswa
+            $mahasiswaData = [
+                'nim' => $row['nim'],
+                'nama' => $row['nama'],
+                'email' => $row['email'],
+                'prodi_id' => $row['prodi_id'] ?? 1,
+                'tahun_angkatan' => $row['tahun_angkatan'] ?? date('Y'),
+                'semester' => $row['semester'] ?? 1,
+                'status' => 'Aktif'
+            ];
+            
+            $mahasiswaId = $this->ModelMahasiswa->insert($mahasiswaData);
+            
+            // Auto create user account
+            $userModel = new \App\Models\ModelUser();
+            $existingUser = $userModel->where('email', $row['email'])->first();
+            
+            if (!$existingUser) {
+                $userData = [
+                    'nama' => $row['nama'],
+                    'email' => $row['email'],
+                    'password' => password_hash('123456', PASSWORD_DEFAULT),
+                    'jabatan' => 'Mahasiswa',
+                    'profil' => 'avatar.png',
+                    'level_id' => 4
+                ];
+                $userModel->InsertUser($userData);
+            }
+
+            $db->transComplete();
+            return $db->transStatus();
+            
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return false;
+        }
+    }
+
+    public function DownloadTemplate()
+    {
+        $filename = 'template_import_mahasiswa.csv';
+        $header = ['NIM', 'Nama', 'Email', 'Prodi ID', 'Tahun Angkatan', 'Semester'];
+        $sample = [
+            ['2024001', 'John Doe', 'john@student.kampus.ac.id', '1', '2024', '1'],
+            ['2024002', 'Jane Smith', 'jane@student.kampus.ac.id', '2', '2024', '1']
+        ];
+        
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        
+        $output = fopen('php://output', 'w');
+        fputcsv($output, $header);
+        foreach ($sample as $row) {
+            fputcsv($output, $row);
+        }
+        fclose($output);
+        exit;
     }
 }

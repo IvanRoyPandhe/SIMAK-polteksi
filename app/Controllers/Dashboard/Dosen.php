@@ -6,18 +6,24 @@ use App\Controllers\BaseController;
 use App\Models\ModelKRS;
 use App\Models\ModelKHS;
 use App\Models\ModelMahasiswa;
+use App\Models\ModelUser;
 
 class Dosen extends BaseController
 {
     protected $ModelKRS;
     protected $ModelKHS;
     protected $ModelMahasiswa;
+    protected $user;
 
     public function __construct()
     {
         $this->ModelKRS = new ModelKRS();
         $this->ModelKHS = new ModelKHS();
         $this->ModelMahasiswa = new ModelMahasiswa();
+        
+        // Get user data from session
+        $userModel = new ModelUser();
+        $this->user = $userModel->find(session()->get('user_id'));
     }
 
     public function index()
@@ -337,6 +343,19 @@ class Dosen extends BaseController
             ->where('tb_kelas.dosen_id', $dosen_id)
             ->orderBy('tb_tugas.deadline', 'DESC')
             ->get()->getResultArray();
+    }
+
+    public function Laporan()
+    {
+        $dosen_id = session()->get('user_id');
+        $data = [
+            'judul'     => 'Laporan Dosen',
+            'menu'      => 'laporan',
+            'submenu'   => '',
+            'page'      => 'dosen/v_laporan',
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
     }
 
     private function getKonsultasi($dosen_id)

@@ -64,29 +64,7 @@
                             </tr>
                         </thead>
                         <tbody id="daftarMahasiswa">
-                            <!-- Sample Data -->
-                            <tr>
-                                <td>1</td>
-                                <td>2021001</td>
-                                <td>Ahmad Fauzi</td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="85" onchange="hitungNilaiAkhir(this)"></td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="80" onchange="hitungNilaiAkhir(this)"></td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="88" onchange="hitungNilaiAkhir(this)"></td>
-                                <td class="text-center fw-bold">84.3</td>
-                                <td class="text-center"><span class="badge bg-success">A</span></td>
-                                <td class="text-center"><span class="badge bg-warning">Draft</span></td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>2021002</td>
-                                <td>Siti Nurhaliza</td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="78" onchange="hitungNilaiAkhir(this)"></td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="75" onchange="hitungNilaiAkhir(this)"></td>
-                                <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="82" onchange="hitungNilaiAkhir(this)"></td>
-                                <td class="text-center fw-bold">78.5</td>
-                                <td class="text-center"><span class="badge bg-primary">B+</span></td>
-                                <td class="text-center"><span class="badge bg-warning">Draft</span></td>
-                            </tr>
+                            <!-- Data akan dimuat via AJAX -->
                         </tbody>
                     </table>
                 </div>
@@ -177,7 +155,6 @@
 <script>
 function tampilkanNilai() {
     const kelas = document.getElementById('kelasSelect').value;
-    const komponen = document.getElementById('komponenSelect').value;
     
     if (!kelas) {
         alert('Pilih kelas terlebih dahulu');
@@ -186,6 +163,22 @@ function tampilkanNilai() {
     
     document.getElementById('tabelNilai').style.display = 'block';
     document.getElementById('infoKelas').textContent = document.getElementById('kelasSelect').selectedOptions[0].text;
+    
+    // Show sample data for now
+    const sampleData = `
+        <tr>
+            <td>1</td>
+            <td>2021001</td>
+            <td>Ahmad Fauzi</td>
+            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+            <td class="text-center fw-bold">-</td>
+            <td class="text-center">-</td>
+            <td class="text-center"><span class="badge bg-warning">Draft</span></td>
+        </tr>
+    `;
+    document.getElementById('daftarMahasiswa').innerHTML = sampleData;
 }
 
 function hitungNilaiAkhir(input) {
@@ -227,6 +220,11 @@ function simpanNilai() {
             Swal.fire('Tersimpan!', 'Nilai berhasil disimpan sebagai draft', 'success');
         }
     });
+}
+
+function loadMahasiswa(kelasId) {
+    // Function for future implementation
+    console.log('Loading mahasiswa for kelas:', kelasId);
 }
 
 function finalisasiNilai() {

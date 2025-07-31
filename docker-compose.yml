@@ -24,8 +24,7 @@ services:
           Require all granted
         </Directory>
       </VirtualHost>' > /etc/apache2/sites-available/000-default.conf &&
-      chmod -R 777 /var/www/html/writable &&
-      mkdir -p /var/www/html/writable/session /var/www/html/writable/cache &&
+      mkdir -p /var/www/html/writable/cache /var/www/html/writable/session /var/www/html/writable/logs /var/www/html/writable/uploads /var/www/html/writable/debugbar &&
       chmod -R 777 /var/www/html/writable &&
       apache2-foreground"
 
