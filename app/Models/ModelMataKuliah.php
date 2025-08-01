@@ -31,4 +31,13 @@ class ModelMataKuliah extends Model
                     ->where('tb_mata_kuliah.dosen_id', $dosen_id)
                     ->findAll();
     }
+
+    public function getMatkulForKRS($prodi_id, $semester)
+    {
+        return $this->select('tb_mata_kuliah.*, tb_dosen.nama as nama_dosen')
+                    ->join('tb_dosen', 'tb_dosen.id_dosen = tb_mata_kuliah.dosen_id', 'left')
+                    ->where('tb_mata_kuliah.prodi_id', $prodi_id)
+                    ->where('tb_mata_kuliah.semester', $semester)
+                    ->findAll();
+    }
 }

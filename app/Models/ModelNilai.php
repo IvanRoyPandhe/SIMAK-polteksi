@@ -28,4 +28,15 @@ class ModelNilai extends Model
                        ->get()
                        ->getResultArray();
     }
+
+    public function getNilaiByMahasiswa($mahasiswa_id)
+    {
+        return $this->db->table('tb_nilai')
+                       ->select('tb_nilai.*, tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks')
+                       ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_nilai.matkul_id')
+                       ->where('tb_nilai.mahasiswa_id', $mahasiswa_id)
+                       ->orderBy('tb_mata_kuliah.semester', 'ASC')
+                       ->get()
+                       ->getResultArray();
+    }
 }
