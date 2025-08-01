@@ -8,7 +8,16 @@
             <div class="row mb-4">
                 <div class="col-md-4">
                     <label class="form-label">Pilih Periode</label>
-                    <input type="month" class="form-control" value="<?= $periode ?>" onchange="window.location.href='<?= base_url('KasInternal/Laporan') ?>?periode='+this.value">
+                    <select class="form-control" onchange="window.location.href='<?= base_url('KasInternal/Laporan') ?>?periode='+this.value">
+                        <?php foreach ($periode_options as $option): ?>
+                            <option value="<?= $option['periode'] ?>" <?= $periode == $option['periode'] ? 'selected' : '' ?>>
+                                <?= $option['periode_name'] ?>
+                            </option>
+                        <?php endforeach; ?>
+                        <?php if (empty($periode_options)): ?>
+                            <option value="">Tidak ada data transaksi</option>
+                        <?php endif; ?>
+                    </select>
                 </div>
                 <div class="col-md-8 d-flex align-items-end">
                     <button class="btn btn-success me-2">
@@ -28,7 +37,7 @@
                 <div class="col-md-3">
                     <div class="card bg-success text-white">
                         <div class="card-body text-center">
-                            <h4>Rp 50,000,000</h4>
+                            <h4>Rp <?= number_format($summary['total_masuk'], 0, ',', '.') ?></h4>
                             <p class="mb-0">Total Pemasukan</p>
                         </div>
                     </div>
@@ -36,7 +45,7 @@
                 <div class="col-md-3">
                     <div class="card bg-danger text-white">
                         <div class="card-body text-center">
-                            <h4>Rp 35,000,000</h4>
+                            <h4>Rp <?= number_format($summary['total_keluar'], 0, ',', '.') ?></h4>
                             <p class="mb-0">Total Pengeluaran</p>
                         </div>
                     </div>
@@ -44,7 +53,7 @@
                 <div class="col-md-3">
                     <div class="card bg-primary text-white">
                         <div class="card-body text-center">
-                            <h4>Rp 15,000,000</h4>
+                            <h4>Rp <?= number_format($summary['saldo_bersih'], 0, ',', '.') ?></h4>
                             <p class="mb-0">Saldo Bersih</p>
                         </div>
                     </div>
@@ -52,7 +61,7 @@
                 <div class="col-md-3">
                     <div class="card bg-info text-white">
                         <div class="card-body text-center">
-                            <h4>Rp 90,000,000</h4>
+                            <h4>Rp <?= number_format($saldo_bank, 0, ',', '.') ?></h4>
                             <p class="mb-0">Total Saldo Bank</p>
                         </div>
                     </div>
@@ -75,21 +84,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php foreach ($pemasukan as $item): ?>
                                     <tr>
-                                        <td>Uang Kuliah</td>
-                                        <td class="text-end">Rp 30,000,000</td>
+                                        <td><?= $item['kategori'] ?? 'Tidak ada kategori' ?></td>
+                                        <td class="text-end">Rp <?= number_format($item['total'], 0, ',', '.') ?></td>
                                     </tr>
+                                    <?php endforeach; ?>
+                                    <?php if (empty($pemasukan)): ?>
                                     <tr>
-                                        <td>Pendaftaran Mahasiswa Baru</td>
-                                        <td class="text-end">Rp 15,000,000</td>
+                                        <td colspan="2" class="text-center text-muted">Tidak ada data pemasukan</td>
                                     </tr>
-                                    <tr>
-                                        <td>Sertifikasi & Pelatihan</td>
-                                        <td class="text-end">Rp 5,000,000</td>
-                                    </tr>
+                                    <?php endif; ?>
                                     <tr class="table-success">
                                         <th>Total Pemasukan</th>
-                                        <th class="text-end">Rp 50,000,000</th>
+                                        <th class="text-end">Rp <?= number_format($summary['total_masuk'], 0, ',', '.') ?></th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -111,21 +119,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <?php foreach ($pengeluaran as $item): ?>
                                     <tr>
-                                        <td>Gaji & Tunjangan Dosen</td>
-                                        <td class="text-end">Rp 20,000,000</td>
+                                        <td><?= $item['kategori'] ?? 'Tidak ada kategori' ?></td>
+                                        <td class="text-end">Rp <?= number_format($item['total'], 0, ',', '.') ?></td>
                                     </tr>
+                                    <?php endforeach; ?>
+                                    <?php if (empty($pengeluaran)): ?>
                                     <tr>
-                                        <td>Operasional Kampus</td>
-                                        <td class="text-end">Rp 10,000,000</td>
+                                        <td colspan="2" class="text-center text-muted">Tidak ada data pengeluaran</td>
                                     </tr>
-                                    <tr>
-                                        <td>Pemeliharaan & Perbaikan</td>
-                                        <td class="text-end">Rp 5,000,000</td>
-                                    </tr>
+                                    <?php endif; ?>
                                     <tr class="table-danger">
                                         <th>Total Pengeluaran</th>
-                                        <th class="text-end">Rp 35,000,000</th>
+                                        <th class="text-end">Rp <?= number_format($summary['total_keluar'], 0, ',', '.') ?></th>
                                     </tr>
                                 </tbody>
                             </table>
@@ -153,30 +160,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php 
+                                $running_balance = 0;
+                                foreach ($transaksi as $item): 
+                                    $running_balance += ($item['dana_masuk'] - $item['dana_keluar']);
+                                ?>
                                 <tr>
-                                    <td>01/12/2024</td>
-                                    <td><span class="badge bg-success">Uang Kuliah</span></td>
-                                    <td>Pembayaran SPP Mahasiswa</td>
-                                    <td class="text-success">Rp 10,000,000</td>
-                                    <td>-</td>
-                                    <td>Rp 10,000,000</td>
+                                    <td><?= date('d/m/Y', strtotime($item['tgl'])) ?></td>
+                                    <td>
+                                        <span class="badge bg-<?= $item['dana_masuk'] > 0 ? 'success' : 'danger' ?>">
+                                            <?= $item['kategori'] ?? 'Tidak ada kategori' ?>
+                                        </span>
+                                    </td>
+                                    <td><?= $item['keterangan'] ?></td>
+                                    <td class="text-success">
+                                        <?= $item['dana_masuk'] > 0 ? 'Rp ' . number_format($item['dana_masuk'], 0, ',', '.') : '-' ?>
+                                    </td>
+                                    <td class="text-danger">
+                                        <?= $item['dana_keluar'] > 0 ? 'Rp ' . number_format($item['dana_keluar'], 0, ',', '.') : '-' ?>
+                                    </td>
+                                    <td>Rp <?= number_format($running_balance, 0, ',', '.') ?></td>
                                 </tr>
+                                <?php endforeach; ?>
+                                <?php if (empty($transaksi)): ?>
                                 <tr>
-                                    <td>02/12/2024</td>
-                                    <td><span class="badge bg-danger">Gaji Dosen</span></td>
-                                    <td>Gaji Bulan Desember</td>
-                                    <td>-</td>
-                                    <td class="text-danger">Rp 5,000,000</td>
-                                    <td>Rp 5,000,000</td>
+                                    <td colspan="6" class="text-center text-muted">Tidak ada transaksi pada periode ini</td>
                                 </tr>
-                                <tr>
-                                    <td>03/12/2024</td>
-                                    <td><span class="badge bg-success">Pendaftaran</span></td>
-                                    <td>Pendaftaran Mahasiswa Baru</td>
-                                    <td class="text-success">Rp 3,000,000</td>
-                                    <td>-</td>
-                                    <td>Rp 8,000,000</td>
-                                </tr>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>

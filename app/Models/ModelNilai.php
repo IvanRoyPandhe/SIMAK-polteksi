@@ -8,7 +8,7 @@ class ModelNilai extends Model
 {
     protected $table = 'tb_nilai';
     protected $primaryKey = 'id_nilai';
-    protected $allowedFields = ['mahasiswa_id', 'matkul_id', 'kelas_id', 'periode_id', 'nilai_tugas', 'nilai_uts', 'nilai_uas', 'nilai_akhir', 'nilai_huruf', 'bobot', 'status', 'created_by'];
+    protected $allowedFields = ['mahasiswa_id', 'matkul_id', 'kelas_id', 'periode_id', 'nilai_tugas', 'nilai_uts', 'nilai_uas', 'nilai_akhir', 'nilai_huruf', 'bobot', 'status'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
@@ -36,6 +36,20 @@ class ModelNilai extends Model
                        ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_nilai.matkul_id')
                        ->where('tb_nilai.mahasiswa_id', $mahasiswa_id)
                        ->orderBy('tb_mata_kuliah.semester', 'ASC')
+                       ->get()
+                       ->getResultArray();
+    }
+
+    public function getAllNilaiWithDetails()
+    {
+        return $this->db->table('tb_nilai')
+                       ->select('tb_nilai.*, tb_mahasiswa.nim, tb_mahasiswa.nama as nama_mahasiswa, 
+                                tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks,
+                                tb_periode_akademik.semester, tb_periode_akademik.tahun_akademik')
+                       ->join('tb_mahasiswa', 'tb_mahasiswa.id_mahasiswa = tb_nilai.mahasiswa_id')
+                       ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_nilai.matkul_id')
+                       ->join('tb_periode_akademik', 'tb_periode_akademik.id_periode = tb_nilai.periode_id', 'left')
+                       ->orderBy('tb_nilai.created_at', 'DESC')
                        ->get()
                        ->getResultArray();
     }

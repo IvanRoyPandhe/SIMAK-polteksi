@@ -32,7 +32,7 @@
                         <tr>
                             <td><?= $no++ ?></td>
                             <td><?= $data['nim'] ?></td>
-                            <td><?= $data['nama'] ?></td>
+                            <td><?= $data['nama_mahasiswa'] ?></td>
                             <td>
                                 <strong><?= $data['kode_matkul'] ?></strong><br>
                                 <small><?= $data['nama_matkul'] ?> (<?= $data['sks'] ?> SKS)</small>

@@ -8,24 +8,30 @@ class ModelKasInternal extends Model
 {
     public function AllData()
     {
-        return $this->db->table('tb_keuangan_internal')
-            ->orderBy('created_at DESC')
+        return $this->db->table('tb_keuangan_internal k')
+            ->join('tb_kategori_keuangan kat', 'kat.id_kategori = k.kategori_id', 'left')
+            ->select('k.*, k.id_kas_internal as id_keuangan, COALESCE(kat.nama_kategori, "Tidak ada kategori") as kategori')
+            ->orderBy('k.created_at', 'DESC')
             ->get()->getResultArray();
     }
 
     public function AllDataDanaMasuk()
     {
-        return $this->db->table('tb_keuangan_internal')
-            ->where('status', 'Masuk')
-            ->orderBy('created_at DESC')
+        return $this->db->table('tb_keuangan_internal k')
+            ->join('tb_kategori_keuangan kat', 'kat.id_kategori = k.kategori_id', 'left')
+            ->select('k.*, k.id_kas_internal as id_keuangan, COALESCE(kat.nama_kategori, "Tidak ada kategori") as kategori')
+            ->where('k.status', 'Masuk')
+            ->orderBy('k.created_at', 'DESC')
             ->get()->getResultArray();
     }
 
     public function AllDataDanaKeluar()
     {
-        return $this->db->table('tb_keuangan_internal')
-            ->where('status', 'Keluar')
-            ->orderBy('created_at DESC')
+        return $this->db->table('tb_keuangan_internal k')
+            ->join('tb_kategori_keuangan kat', 'kat.id_kategori = k.kategori_id', 'left')
+            ->select('k.*, k.id_kas_internal as id_keuangan, COALESCE(kat.nama_kategori, "Tidak ada kategori") as kategori')
+            ->where('k.status', 'Keluar')
+            ->orderBy('k.created_at', 'DESC')
             ->get()->getResultArray();
     }
 
@@ -40,14 +46,14 @@ class ModelKasInternal extends Model
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
         $this->db->table('tb_keuangan_internal')
-            ->where('id_keuangan', $data['id_keuangan'])
+            ->where('id_kas_internal', $data['id_keuangan'])
             ->update($data);
     }
 
     public function DeleteData($data)
     {
         $this->db->table('tb_keuangan_internal')
-            ->where('id_keuangan', $data['id_keuangan'])
+            ->where('id_kas_internal', $data['id_keuangan'])
             ->delete($data);
     }
 
@@ -66,8 +72,9 @@ class ModelKasInternal extends Model
 
     public function countByKategori($kategori)
     {
-        return $this->db->table('tb_keuangan_internal')
-            ->where('kategori', $kategori)
+        return $this->db->table('tb_keuangan_internal k')
+            ->join('tb_kategori_keuangan kat', 'kat.id_kategori = k.kategori_id', 'left')
+            ->where('COALESCE(kat.nama_kategori, "Tidak ada kategori")', $kategori)
             ->countAllResults();
     }
 

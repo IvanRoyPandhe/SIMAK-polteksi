@@ -808,6 +808,18 @@
                         message = `Program studi "${name}" akan dihapus!`;
                         url = `<?= base_url('Prodi/delete/') ?>/${id}`;
                         break;
+                    case 'rekening-bank':
+                        message = `Rekening "${name}" akan dihapus!`;
+                        url = `<?= base_url('KasInternal/DeleteRekening/') ?>/${id}`;
+                        break;
+                    case 'kategori-keuangan':
+                        message = `Kategori "${name}" akan dihapus!`;
+                        url = `<?= base_url('KasInternal/DeleteKategori/') ?>/${id}`;
+                        break;
+                    case 'anggaran':
+                        message = `Anggaran "${name}" akan dihapus!`;
+                        url = `<?= base_url('KasInternal/DeleteAnggaran/') ?>/${id}`;
+                        break;
                     default:
                         console.log('Tipe data tidak dikenal');
                         return;

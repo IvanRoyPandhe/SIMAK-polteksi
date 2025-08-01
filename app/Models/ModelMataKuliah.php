@@ -40,4 +40,14 @@ class ModelMataKuliah extends Model
                     ->where('tb_mata_kuliah.semester', $semester)
                     ->findAll();
     }
+
+    public function AllData()
+    {
+        return $this->select('tb_mata_kuliah.*, tb_prodi.nama_prodi, tb_dosen.nama as nama_dosen')
+                    ->join('tb_prodi', 'tb_prodi.id_prodi = tb_mata_kuliah.prodi_id', 'left')
+                    ->join('tb_dosen', 'tb_dosen.id_dosen = tb_mata_kuliah.dosen_id', 'left')
+                    ->orderBy('tb_mata_kuliah.prodi_id', 'ASC')
+                    ->orderBy('tb_mata_kuliah.semester', 'ASC')
+                    ->findAll();
+    }
 }

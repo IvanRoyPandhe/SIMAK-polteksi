@@ -8,7 +8,7 @@ class ModelKRS extends Model
 {
     protected $table = 'tb_krs';
     protected $primaryKey = 'id_krs';
-    protected $allowedFields = ['mahasiswa_id', 'matkul_id', 'semester_aktif', 'tahun_akademik', 'status'];
+    protected $allowedFields = ['mahasiswa_id', 'mata_kuliah_id', 'kelas_id', 'periode_id', 'status', 'catatan', 'tgl_pengajuan', 'tgl_persetujuan'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';

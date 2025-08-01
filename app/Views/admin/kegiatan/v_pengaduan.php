@@ -67,12 +67,6 @@
                   <i class="fas fa-list text-orange" style="margin-right: 8px;"></i><?= $isi_pengaduan['jenis_masalah'] ?>
                   <hr class="m-1">
                   <?= $isi_pengaduan['masalah'] ?>
-                  <hr class="m-1">
-                  <div class="text-center">
-                    <a data-toggle="modal" data-target="#modal-lg-<?= $key ?>">
-                      <img src="<?= base_url('uploaded/lampiran_pengaduan/' . $isi_pengaduan['lampiran']) ?>" alt="Gambar Lampiran Pengaduan" title="Klik untuk diperbesar" style="width: 60px; height: 60px;">
-                    </a>
-                  </div>
                 </td>
                 <td class="align-middle">
                   <?= $isi_pengaduan['jawaban'] ?? 'Belum dijawab' ?>
@@ -109,24 +103,7 @@
   </div>
 </div>
 
-<?php foreach ($pengaduan as $key => $isi_pengaduan) : ?>
-  <!-- /.modal-detail -->
-  <div class="modal fade" id="modal-lg-<?= $key ?>">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header justify-content-center text-white" style="background: linear-gradient(135deg, #dc2626, #ef4444);">
-          <h4 class=" modal-title">Lampiran dari "<?= $isi_pengaduan['nama_pengadu'] ?>"</h4>
-        </div>
-        <div class="modal-body text-center">
-          <img src="<?= base_url('uploaded/lampiran_pengaduan/' . $isi_pengaduan['lampiran']) ?>" style="max-width: 100%; height: auto;" width="350px" alt="Gambar Lampiran Pengaduan" title="<?= $isi_pengaduan['lampiran'] ?>">
-        </div>
-        <div class="modal-footer justify-content-between">
-          <button type="button" class="btn btn-outline-warning btn-block" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-<?php endforeach; ?>
+
 
 <?php foreach ($pengaduan as $key => $isi_pengaduan) : ?>
   <!-- /.modal-edit -->

@@ -17,13 +17,26 @@ class Pengaduan extends BaseController
 
     public function index()
     {
-        $data = [
-            'judul'     => 'Pengaduan',
-            'menu'      => 'pengaduan',
-            'submenu'   => '',
-            'page'      => 'admin/kegiatan/v_pengaduan',
-            'pengaduan' => $this->ModelPengaduan->AllData(),
-        ];
+        if (session()->get('level') == 4) {
+            // Mahasiswa - hanya lihat pengaduan sendiri
+            $pengaduan = $this->ModelPengaduan->getPengaduanByUser(session()->get('nama'));
+            $data = [
+                'judul'     => 'Pengaduan Saya',
+                'menu'      => 'pengaduan',
+                'submenu'   => '',
+                'page'      => 'mahasiswa/v_pengaduan_mahasiswa',
+                'pengaduan' => $pengaduan,
+            ];
+        } else {
+            // Admin/Petugas - lihat semua pengaduan
+            $data = [
+                'judul'     => 'Pengaduan',
+                'menu'      => 'pengaduan',
+                'submenu'   => '',
+                'page'      => 'admin/kegiatan/v_pengaduan',
+                'pengaduan' => $this->ModelPengaduan->AllData(),
+            ];
+        }
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
     }
@@ -60,6 +73,41 @@ class Pengaduan extends BaseController
         } else {
             session()->setFlashdata('errors', $validation->getErrors());
             return redirect()->to(base_url('Pengaduan'));
+        }
+    }
+
+    public function BuatPengaduan()
+    {
+        $validation = \Config\Services::validation();
+        if ($this->validate([
+            'judul' => [
+                'label' => 'Judul Pengaduan',
+                'rules' => 'required|max_length[100]',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong',
+                    'max_length' => '{field} maksimal 100 karakter',
+                ]
+            ],
+            'isi_pengaduan' => [
+                'label' => 'Isi Pengaduan',
+                'rules' => 'required',
+                'errors' => [
+                    'required' => '{field} tidak boleh kosong',
+                ]
+            ],
+        ])) {
+            $data = [
+                'nama_pengadu' => session()->get('nama'),
+                'jenis_masalah' => esc($this->request->getPost('judul')),
+                'masalah' => esc($this->request->getPost('isi_pengaduan')),
+                'status' => 0
+            ];
+            $this->ModelPengaduan->insert($data);
+            session()->setFlashdata('info', 'Pengaduan berhasil dikirim');
+            return redirect()->to(base_url('Pengaduan'));
+        } else {
+            session()->setFlashdata('errors', $validation->getErrors());
+            return redirect()->to(base_url('Pengaduan'))->withInput();
         }
     }
 

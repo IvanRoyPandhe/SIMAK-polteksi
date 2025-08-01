@@ -6,11 +6,23 @@ use CodeIgniter\Model;
 
 class ModelPengaduan extends Model
 {
+    protected $table = 'tb_pengaduan';
+    protected $primaryKey = 'id_pengaduan';
+    protected $allowedFields = ['nama_pengadu', 'no_hp', 'jenis_masalah', 'masalah', 'status', 'jawaban'];
+
     public function AllData()
     {
         return $this->db->table('tb_pengaduan')
             ->orderBy('status')
             ->orderBy('updated_at DESC')
+            ->get()->getResultArray();
+    }
+
+    public function getPengaduanByUser($nama_pengadu)
+    {
+        return $this->db->table('tb_pengaduan')
+            ->where('nama_pengadu', $nama_pengadu)
+            ->orderBy('created_at DESC')
             ->get()->getResultArray();
     }
 
@@ -27,9 +39,7 @@ class ModelPengaduan extends Model
         $this->db->table('tb_pengaduan')
             ->where('id_pengaduan', $id_pengaduan)
             ->update([
-                'status' => 1,
-                'user_id' => session()->get('user_id'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'status' => 1
             ]);
     }
 
