@@ -6,16 +6,22 @@ use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\ModelInventaris;
 use App\Models\ModelAdmin;
+use App\Models\ModelUser;
 
 class Inventaris extends BaseController
 {
     protected $ModelInventaris;
     protected $ModelAdmin;
+    protected $user;
 
     public function __construct()
     {
         $this->ModelInventaris = new ModelInventaris();
         $this->ModelAdmin = new ModelAdmin();
+        
+        // Get user data from session
+        $userModel = new ModelUser();
+        $this->user = $userModel->find(session()->get('user_id'));
     }
 
     public function getNamaBarangMasuk()
@@ -133,9 +139,8 @@ class Inventaris extends BaseController
             }
             $data = [
                 'kategori'      => $kategori,
-                'nama'          => esc($this->request->getPost('nama')),
+                'nama_barang'   => esc($this->request->getPost('nama')),
                 'jumlah'        => esc($this->request->getPost('jumlah')),
-                'harga'         => esc($this->request->getPost('harga')),
                 'satuan'        => esc($this->request->getPost('satuan')),
                 'kondisi'       => esc($this->request->getPost('kondisi')),
                 'keterangan'    => esc($this->request->getPost('keterangan')),
@@ -229,9 +234,8 @@ class Inventaris extends BaseController
             $data = [
                 'id_inventaris' => $id_inventaris,
                 'kategori'      => $kategori,
-                'nama'          => esc($this->request->getPost('nama')),
+                'nama_barang'   => esc($this->request->getPost('nama')),
                 'jumlah'        => esc($this->request->getPost('jumlah')),
-                'harga'         => esc($this->request->getPost('harga')),
                 'satuan'        => esc($this->request->getPost('satuan')),
                 'kondisi'       => esc($this->request->getPost('kondisi')),
                 'keterangan'    => esc($this->request->getPost('keterangan')),
@@ -293,11 +297,10 @@ class Inventaris extends BaseController
             }
             $dataKeluar = [
                 'kategori'      => $this->request->getPost('kategori'),
-                'nama'          => $nama,
+                'nama_barang'   => $nama,
                 'jumlah'        => $jumlahKeluar,
                 'satuan'        => $this->request->getPost('satuan'),
                 'kondisi'       => $this->request->getPost('kondisi'),
-                'harga'         => $this->request->getPost('harga'),
                 'keterangan'    => $this->request->getPost('keterangan'),
                 'status'        => 1,
                 'user_id'       => session()->get('user_id'),
@@ -359,7 +362,6 @@ class Inventaris extends BaseController
             }
             $data = [
                 'id_inventaris' => $id_inventaris,
-                'harga'         => esc($this->request->getPost('harga')),
                 'kondisi'       => esc($this->request->getPost('kondisi')),
                 'keterangan'    => esc($this->request->getPost('keterangan')),
                 'status'        => 1,

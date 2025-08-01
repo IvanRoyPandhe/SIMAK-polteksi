@@ -83,17 +83,17 @@
               <?php foreach ($isi_kategori_masuk as $isi_inventaris_masuk) : ?>
                 <tr class="text-center">
                   <td class="text-center"><b><?= $no++; ?></b></td>
-                  <td><?= $isi_inventaris_masuk['nama'] ?></td>
+                  <td><?= $isi_inventaris_masuk['nama_barang'] ?></td>
                   <td><?= $isi_inventaris_masuk['jumlah'] ?></td>
                   <td><?= $isi_inventaris_masuk['satuan'] ?></td>
                   <td><?= $isi_inventaris_masuk['kondisi'] ?></td>
                   <td><?= $isi_inventaris_masuk['keterangan'] ?></td>
-                  <td>Rp. <?= number_format($isi_inventaris_masuk['harga'], 0) ?></td>
+                  <td>-</td>
                   <td class="text-center">
                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-edit<?= $isi_inventaris_masuk['id_inventaris'] ?>">
                       <i class="bi bi-pencil fs-6"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $isi_inventaris_masuk['id_inventaris'] ?>" data-name="<?= $isi_inventaris_masuk['nama'] . ' dengan Kategori ' . $isi_inventaris_masuk['kategori']  ?>" data-type="inventaris-masuk">
+                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $isi_inventaris_masuk['id_inventaris'] ?>" data-name="<?= $isi_inventaris_masuk['nama_barang'] . ' dengan Kategori ' . $isi_inventaris_masuk['kategori']  ?>" data-type="inventaris-masuk">
                       <i class="bi bi-trash fs-6"></i>
                     </button>
                   </td>
@@ -307,16 +307,13 @@
           </div>
           <div class="form-group">
             <label for="nama">Nama Barang : </label>
-            <input class="form-control" type="text" name="nama" id="nama" value="<?= $isi_inventaris_masuk['nama'] ?>" placeholder="Silahkan isikan nama" maxlength="80" required>
+            <input class="form-control" type="text" name="nama" id="nama" value="<?= $isi_inventaris_masuk['nama_barang'] ?>" placeholder="Silahkan isikan nama" maxlength="80" required>
           </div>
           <div class="form-group">
             <label for="jumlah">Jumlah Barang : </label>
             <input class="form-control" type="number" name="jumlah" id="jumlah" value="<?= $isi_inventaris_masuk['jumlah'] ?>" placeholder="Silahkan isikan jumlah" class="form-control" min="1" max="2147483647" required>
           </div>
-          <div class="form-group">
-            <label for="harga">Harga Barang : </label>
-            <input class="form-control" type="number" name="harga" id="harga" value="<?= $isi_inventaris_masuk['harga'] ?>" placeholder="Silahkan isikan jumlah" class="form-control" min="0" max="2147483647">
-          </div>
+
           <div class="form-group">
             <label for="satuan">Satuan : </label>
             <input class="form-control" type="text" name="satuan" id="satuan" value="<?= $isi_inventaris_masuk['satuan'] ?>" placeholder="Silahkan isikan satuan" maxlength="25" required>
@@ -360,9 +357,11 @@
           <label for="nama_select">Nama Barang :</label>
           <select name="nama_select" id="nama_select" class="form-select" required>
             <option value="" disabled selected>Pilih Nama Barang</option>
-            <?php foreach ($nama_barang_masuk as $nama) : ?>
-              <option value="<?= $nama['nama'] ?>"><?= $nama['nama'] ?></option>
-            <?php endforeach; ?>
+            <?php if (!empty($nama_barang_masuk)): ?>
+              <?php foreach ($nama_barang_masuk as $nama) : ?>
+                <option value="<?= $nama['nama'] ?? $nama['nama_barang'] ?>"><?= $nama['nama'] ?? $nama['nama_barang'] ?></option>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </select>
         </div>
         <input type="hidden" name="kategori" id="kategori_keluar">

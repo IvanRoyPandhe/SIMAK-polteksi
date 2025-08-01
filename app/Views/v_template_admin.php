@@ -288,22 +288,7 @@
                                 </ul>
                             </li>
                         <?php endif; ?>
-                        <?php if (in_array(session()->get('level'), [1, 2])): ?>
-                        <li class="sidebar-item <?= $menu == 'laporan' ? 'active' : '' ?> has-sub">
-                            <a href="#" class='sidebar-link'>
-                                <i class="fas fa-book"></i>
-                                <span>Laporan</span>
-                            </a>
-                            <ul class="submenu <?= $menu == 'laporan-kas' ? 'active submenu-open' : '' ?>">
-                                <li class="submenu-item <?= $submenu == 'laporan-kas-internal' ? 'active' : '' ?>">
-                                    <a href="<?= base_url('Laporan/LaporanKas') ?>" class="submenu-link"><i class="nav-icon far bi bi-wallet" style="margin-right: 8px;"></i>Keuangan Kampus</a>
-                                </li>
-                                <li class="submenu-item <?= $submenu == 'laporan-inventaris' ? 'active' : '' ?>">
-                                    <a href="<?= base_url('Laporan/LaporanInventaris') ?>" class="submenu-link"><i class="nav-icon bi bi-archive" style="margin-right: 8px;"></i>Inventaris</a>
-                                </li>
-                            </ul>
-                        </li>
-                        <?php endif; ?>
+
                         <?php if (in_array(session()->get('level'), [1, 2, 3])): ?>
                         <li class="sidebar-title">Kegiatan Kampus</li>
                         <li class="sidebar-item <?= $menu == 'kegiatan' ? 'active' : '' ?>">

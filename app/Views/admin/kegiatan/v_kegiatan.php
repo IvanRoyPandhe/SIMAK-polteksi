@@ -69,10 +69,10 @@
                             <tr>
                                 <td class="text-center"><b><?= $no++; ?></b></td>
                                 <td>
-                                    <b><?= $isi_kegiatan['nama'] ?></b>
+                                    <b><?= $isi_kegiatan['judul'] ?></b>
                                     <br>
                                     <?php
-                                    $dateTime = new DateTime($isi_kegiatan['jam']);
+                                    $dateTime = new DateTime($isi_kegiatan['waktu']);
                                     $formattedTime = $dateTime->format('H:i');
                                     ?>
                                     <span class="text-secondary">
@@ -92,7 +92,7 @@
                                     <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-edit<?= $isi_kegiatan['id_kegiatan'] ?>">
                                         <i class="bi bi-pencil fs-6"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $isi_kegiatan['id_kegiatan'] ?>" data-name="<?= $isi_kegiatan['nama'] ?>" data-type="kegiatan">
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="<?= $isi_kegiatan['id_kegiatan'] ?>" data-name="<?= $isi_kegiatan['judul'] ?>" data-type="kegiatan">
                                         <i class="bi bi-trash fs-6"></i>
                                     </button>
                                 </td>
@@ -118,24 +118,28 @@
             <div class="modal-body">
                 <?= form_open('Kegiatan/InsertData') ?>
                 <div class="form-group">
-                    <label for="nama">Nama : </label>
-                    <input class="form-control" type="text" name="nama" id="nama" maxlength="50" placeholder="Silahkan isikan nama" required>
+                    <label for="judul">Judul : </label>
+                    <input class="form-control" type="text" name="judul" id="judul" maxlength="255" placeholder="Silahkan isikan judul" required>
                 </div>
                 <div class="form-group">
                     <label for="kategori-tambah">Kategori :</label>
                     <select class="form-select" name="kategori" id="kategori-tambah">
                         <option value="" disabled selected>Pilih kategori</option>
-                        <option value="Kegiatan">Kegiatan</option>
-                        <option value="Pengumuman">Pengumuman</option>
+                        <option value="kegiatan">Kegiatan</option>
+                        <option value="pengumuman">Pengumuman</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="tanggal">Tanggal : </label>
                     <input class="form-control" type="date" name="tanggal" id="tanggal" required>
                 </div>
-                <div class="form-group" id="jam-div-tambah" style="display: none;">
-                    <label for="jam">Jam : </label>
-                    <input class="form-control" type="time" name="jam" id="jam">
+                <div class="form-group" id="waktu-div-tambah" style="display: none;">
+                    <label for="waktu">Waktu : </label>
+                    <input class="form-control" type="time" name="waktu" id="waktu">
+                </div>
+                <div class="form-group" id="tempat-div-tambah" style="display: none;">
+                    <label for="tempat">Tempat : </label>
+                    <input class="form-control" type="text" name="tempat" id="tempat" maxlength="255" placeholder="Silahkan isikan tempat">
                 </div>
                 <div class="form-group">
                     <label for="status">Status :</label>
@@ -173,24 +177,28 @@
                 <div class="modal-body">
                     <?= form_open('Kegiatan/EditData/' . $isi_kegiatan['id_kegiatan']) ?>
                     <div class="form-group">
-                        <label for="nama">Nama : </label>
-                        <input class="form-control" type="text" name="nama" id="nama" maxlength="50" value="<?= $isi_kegiatan['nama'] ?>" required>
+                        <label for="judul">Judul : </label>
+                        <input class="form-control" type="text" name="judul" id="judul" maxlength="255" value="<?= $isi_kegiatan['judul'] ?>" required>
                     </div>
                     <div class="form-group">
                         <label for="kategori-edit<?= $isi_kegiatan['id_kegiatan'] ?>">Kategori :</label>
                         <select class="form-select" name="kategori" id="kategori-edit<?= $isi_kegiatan['id_kegiatan'] ?>">
                             <option value="" disabled selected>Pilih kategori</option>
-                            <option value="Kegiatan" <?= ('Kegiatan' === $isi_kegiatan['kategori']) ? 'selected' : '' ?>>Kegiatan</option>
-                            <option value="Pengumuman" <?= ('Pengumuman' === $isi_kegiatan['kategori']) ? 'selected' : '' ?>>Pengumuman</option>
+                            <option value="kegiatan" <?= ('kegiatan' === $isi_kegiatan['kategori']) ? 'selected' : '' ?>>Kegiatan</option>
+                            <option value="pengumuman" <?= ('pengumuman' === $isi_kegiatan['kategori']) ? 'selected' : '' ?>>Pengumuman</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="tanggal">Tanggal : </label>
                         <input class="form-control" type="date" name="tanggal" id="tanggal" value="<?= $isi_kegiatan['tgl'] ?>" required>
                     </div>
-                    <div class="form-group" id="jam-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>" style="display: <?= ('Kegiatan' === $isi_kegiatan['kategori']) ? 'block' : 'none' ?>;">
-                        <label for="jam">Jam : </label>
-                        <input class="form-control" type="time" name="jam" id="jam" value="<?= $isi_kegiatan['jam'] ?>">
+                    <div class="form-group" id="waktu-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>" style="display: <?= ('kegiatan' === $isi_kegiatan['kategori']) ? 'block' : 'none' ?>;">
+                        <label for="waktu">Waktu : </label>
+                        <input class="form-control" type="time" name="waktu" id="waktu" value="<?= $isi_kegiatan['waktu'] ?>">
+                    </div>
+                    <div class="form-group" id="tempat-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>" style="display: <?= ('kegiatan' === $isi_kegiatan['kategori']) ? 'block' : 'none' ?>;">
+                        <label for="tempat">Tempat : </label>
+                        <input class="form-control" type="text" name="tempat" id="tempat" maxlength="255" value="<?= $isi_kegiatan['tempat'] ?>">
                     </div>
                     <div class="form-group">
                         <label for="status">Status :</label>
@@ -218,16 +226,30 @@
 <script>
     // Create
     document.getElementById('kategori-tambah').addEventListener('change', function() {
-        const jamDivTambah = document.getElementById('jam-div-tambah');
-        jamDivTambah.style.display = (this.value === 'Kegiatan') ? 'block' : 'none';
+        const waktuDivTambah = document.getElementById('waktu-div-tambah');
+        const tempatDivTambah = document.getElementById('tempat-div-tambah');
+        if (this.value === 'kegiatan') {
+            waktuDivTambah.style.display = 'block';
+            tempatDivTambah.style.display = 'block';
+        } else {
+            waktuDivTambah.style.display = 'none';
+            tempatDivTambah.style.display = 'none';
+        }
     });
 
     // Edit
     <?php foreach ($kegiatan as $key => $isi_kegiatan): ?>
         const kategoriEdit<?= $isi_kegiatan['id_kegiatan'] ?> = document.getElementById('kategori-edit<?= $isi_kegiatan['id_kegiatan'] ?>');
-        const jamDivEdit<?= $isi_kegiatan['id_kegiatan'] ?> = document.getElementById('jam-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>');
+        const waktuDivEdit<?= $isi_kegiatan['id_kegiatan'] ?> = document.getElementById('waktu-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>');
+        const tempatDivEdit<?= $isi_kegiatan['id_kegiatan'] ?> = document.getElementById('tempat-div-edit<?= $isi_kegiatan['id_kegiatan'] ?>');
         kategoriEdit<?= $isi_kegiatan['id_kegiatan'] ?>.addEventListener('change', function() {
-            jamDivEdit<?= $isi_kegiatan['id_kegiatan'] ?>.style.display = (this.value === 'Kegiatan') ? 'block' : 'none';
+            if (this.value === 'kegiatan') {
+                waktuDivEdit<?= $isi_kegiatan['id_kegiatan'] ?>.style.display = 'block';
+                tempatDivEdit<?= $isi_kegiatan['id_kegiatan'] ?>.style.display = 'block';
+            } else {
+                waktuDivEdit<?= $isi_kegiatan['id_kegiatan'] ?>.style.display = 'none';
+                tempatDivEdit<?= $isi_kegiatan['id_kegiatan'] ?>.style.display = 'none';
+            }
         });
     <?php endforeach; ?>
 </script>

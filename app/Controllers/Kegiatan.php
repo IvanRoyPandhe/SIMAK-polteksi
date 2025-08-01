@@ -32,20 +32,19 @@ class Kegiatan extends BaseController
     {
         $validation = \Config\Services::validation();
         if ($this->validate([
-            'nama' => [
-                'label' => 'Nama',
-                'rules' => 'required|max_length[50]',
+            'judul' => [
+                'label' => 'Judul',
+                'rules' => 'required|max_length[255]',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 50 karakter',
+                    'max_length' => '{field} tidak boleh lebih dari 255 karakter',
                 ]
             ],
             'kategori' => [
                 'label' => 'Kategori',
-                'rules' => 'required|max_length[50]',
+                'rules' => 'required',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 50 karakter',
                 ]
             ],
             'tanggal' => [
@@ -57,23 +56,23 @@ class Kegiatan extends BaseController
             ],
             'keterangan' => [
                 'label' => 'Keterangan',
-                'rules' => 'required|max_length[400]',
+                'rules' => 'required',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 400 karakter',
                 ]
             ],
         ])) {
             $kategori = $this->request->getPost('kategori');
-            $jam = $this->request->getPost('jam');
-            if ($kategori == 'Pengumuman') {
-                $jam = '00:00';
+            $waktu = $this->request->getPost('waktu');
+            if ($kategori == 'pengumuman') {
+                $waktu = '00:00:00';
             }
             $data = [
-                'nama'          => esc($this->request->getPost('nama')),
+                'judul'         => esc($this->request->getPost('judul')),
                 'kategori'      => $kategori,
                 'tgl'           => esc($this->request->getPost('tanggal')),
-                'jam'           => $jam,
+                'waktu'         => $waktu,
+                'tempat'        => esc($this->request->getPost('tempat')),
                 'status'        => $this->request->getPost('status'),
                 'keterangan'    => esc($this->request->getPost('keterangan')),
                 'user_id'       => session()->get('user_id'),
@@ -91,20 +90,19 @@ class Kegiatan extends BaseController
     {
         $validation = \Config\Services::validation();
         if ($this->validate([
-            'nama' => [
-                'label' => 'Nama',
-                'rules' => 'required|max_length[50]',
+            'judul' => [
+                'label' => 'Judul',
+                'rules' => 'required|max_length[255]',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 50 karakter',
+                    'max_length' => '{field} tidak boleh lebih dari 255 karakter',
                 ]
             ],
             'kategori' => [
                 'label' => 'Kategori',
-                'rules' => 'required|max_length[50]',
+                'rules' => 'required',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 50 karakter',
                 ]
             ],
             'tanggal' => [
@@ -116,24 +114,24 @@ class Kegiatan extends BaseController
             ],
             'keterangan' => [
                 'label' => 'Keterangan',
-                'rules' => 'required|max_length[400]',
+                'rules' => 'required',
                 'errors' => [
                     'required' => '{field} tidak boleh kosong',
-                    'max_length' => '{field} tidak boleh lebih dari 400 karakter',
                 ]
             ],
         ])) {
             $kategori = $this->request->getPost('kategori');
-            $jam = $this->request->getPost('jam');
-            if ($kategori == 'Pengumuman') {
-                $jam = '00:00';
+            $waktu = $this->request->getPost('waktu');
+            if ($kategori == 'pengumuman') {
+                $waktu = '00:00:00';
             }
             $data = [
                 'id_kegiatan'   => $id_kegiatan,
-                'nama'          => esc($this->request->getPost('nama')),
+                'judul'         => esc($this->request->getPost('judul')),
                 'kategori'      => $kategori,
                 'tgl'           => esc($this->request->getPost('tanggal')),
-                'jam'           => $jam,
+                'waktu'         => $waktu,
+                'tempat'        => esc($this->request->getPost('tempat')),
                 'status'        => $this->request->getPost('status'),
                 'keterangan'    => esc($this->request->getPost('keterangan')),
                 'user_id'       => session()->get('user_id'),

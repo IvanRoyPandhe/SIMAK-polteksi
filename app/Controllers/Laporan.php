@@ -7,18 +7,24 @@ use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\ModelKasInternal;
 use App\Models\ModelAdmin;
 use App\Models\ModelLaporan;
+use App\Models\ModelUser;
 
 class Laporan extends BaseController
 {
     protected $ModelKasInternal;
     protected $ModelAdmin;
     protected $ModelLaporan;
+    protected $user;
 
     public function __construct()
     {
         $this->ModelKasInternal = new ModelKasInternal();
         $this->ModelAdmin = new ModelAdmin();
         $this->ModelLaporan = new ModelLaporan();
+        
+        // Get user data from session
+        $userModel = new ModelUser();
+        $this->user = $userModel->find(session()->get('user_id'));
     }
     public function index()
     {
@@ -27,27 +33,51 @@ class Laporan extends BaseController
 
     public function LaporanKas()
     {
-        $tahunData = $this->ModelLaporan->getTahunKeuangan();
-        $tahunList = [];
-        foreach ($tahunData as $tahun) {
-            $tahunList[] = $tahun->tahun;
+        try {
+            $tahunData = $this->ModelLaporan->getTahunKeuangan();
+            $tahunList = [];
+            if (!empty($tahunData)) {
+                foreach ($tahunData as $tahun) {
+                    $tahunList[] = $tahun->tahun;
+                }
+            }
+            // Add current year if not exists
+            if (empty($tahunList)) {
+                $tahunList[] = date('Y');
+            }
+            
+            $kategoriData = $this->ModelLaporan->getKategoriKeuangan();
+            $kategoriList = [];
+            if (!empty($kategoriData)) {
+                foreach ($kategoriData as $kategori) {
+                    $kategoriList[] = $kategori->keterangan;
+                }
+            }
+            
+            $data = [
+                'judul'         => 'Laporan Kas Internal',
+                'menu'          => 'laporan',
+                'submenu'       => 'laporan-kas-internal',
+                'page'          => 'admin/laporan/v_laporan_kas_internal',
+                'tahunList'     => $tahunList,
+                'kategoriList'  => $kategoriList,
+                'dataTableKas'  => [],
+            ];
+            $data['user'] = $this->user;
+            return view('v_template_admin', $data);
+        } catch (\Exception $e) {
+            $data = [
+                'judul'         => 'Laporan Kas Internal',
+                'menu'          => 'laporan',
+                'submenu'       => 'laporan-kas-internal',
+                'page'          => 'admin/laporan/v_laporan_kas_internal',
+                'tahunList'     => [date('Y')],
+                'kategoriList'  => [],
+                'dataTableKas'  => [],
+            ];
+            $data['user'] = $this->user;
+            return view('v_template_admin', $data);
         }
-        $kategoriData = $this->ModelLaporan->getKategoriKeuangan();
-        $kategoriList = [];
-        foreach ($kategoriData as $kategori) {
-            $kategoriList[] = $kategori->keterangan;
-        }
-        $data = [
-            'judul'         => 'Laporan Kas Internal',
-            'menu'          => 'laporan',
-            'submenu'       => 'laporan-kas-internal',
-            'page'          => 'admin/laporan/v_laporan_kas_internal',
-            'masjid'        => $this->ModelAdmin->ViewSetting(),
-            'tahunList'     => $tahunList,
-            'kategoriList'  => $kategoriList,
-        ];
-        $data['user'] = $this->user;
-        return view('v_template_admin', $data);
     }
 
     public function ViewLaporanKas()
@@ -184,12 +214,21 @@ class Laporan extends BaseController
 
     public function LaporanInventaris()
     {
+        $tahunData = $this->ModelLaporan->getTahunInventaris();
+        $tahunList = [];
+        foreach ($tahunData as $tahun) {
+            $tahunList[] = $tahun->tahun;
+        }
+        if (empty($tahunList)) {
+            $tahunList[] = date('Y');
+        }
+        
         $data = [
             'judul'     => 'Laporan Inventaris',
             'menu'      => 'laporan',
             'submenu'   => 'laporan-inventaris',
             'page'      => 'admin/laporan/v_laporan_inventaris',
-            'masjid'    => $this->ModelAdmin->ViewSetting(),
+            'tahunList' => $tahunList,
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
@@ -197,10 +236,13 @@ class Laporan extends BaseController
 
     public function ViewLaporanInventaris()
     {
+        $tahun = $this->request->getPost('tahun') ?? date('Y');
+        
         $data = [
             'judul'             => 'Laporan Inventaris',
-            'inventaris_masuk'  => $this->ModelLaporan->AllDataLaporanInventarisMasuk(),
-            'inventaris_keluar' => $this->ModelLaporan->AllDataLaporanInventarisKeluar(),
+            'inventaris_masuk'  => $this->ModelLaporan->AllDataLaporanInventarisMasukByYear($tahun),
+            'inventaris_keluar' => $this->ModelLaporan->AllDataLaporanInventarisKeluarByYear($tahun),
+            'tahun'             => $tahun,
             'user_name'         => session()->get('nama'),
             'masjid'            => $this->ModelAdmin->ViewSetting(),
         ];
