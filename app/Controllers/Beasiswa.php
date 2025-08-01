@@ -17,13 +17,26 @@ class Beasiswa extends BaseController
 
     public function index()
     {
-        $data = [
-            'judul'     => 'Data Beasiswa',
-            'menu'      => 'beasiswa',
-            'submenu'   => '',
-            'page'      => 'admin/beasiswa/v_beasiswa',
-            'beasiswa'  => $this->ModelBeasiswa->AllData(),
-        ];
+        // Cek level user untuk menentukan view
+        if (session()->get('level') == 4) {
+            // Mahasiswa - hanya bisa lihat info beasiswa
+            $data = [
+                'judul'     => 'Info Beasiswa',
+                'menu'      => 'beasiswa',
+                'submenu'   => '',
+                'page'      => 'mahasiswa/v_info_beasiswa',
+                'beasiswa'  => $this->ModelBeasiswa->AllData(),
+            ];
+        } else {
+            // Admin/Petugas - bisa CRUD
+            $data = [
+                'judul'     => 'Data Beasiswa',
+                'menu'      => 'beasiswa',
+                'submenu'   => '',
+                'page'      => 'admin/beasiswa/v_beasiswa',
+                'beasiswa'  => $this->ModelBeasiswa->AllData(),
+            ];
+        }
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
     }

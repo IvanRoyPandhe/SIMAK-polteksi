@@ -25,11 +25,25 @@ class Dashboard extends BaseController
 
     public function Mahasiswa()
     {
+        $mahasiswa = $this->ModelMahasiswa->getBiodataWithAkademik(session()->get('user_id'));
+        
+        // Get mata kuliah yang diambil mahasiswa
+        $db = \Config\Database::connect();
+        $jadwal = $db->table('tb_krs')
+            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_krs.mata_kuliah_id')
+            ->join('tb_dosen', 'tb_dosen.id_dosen = tb_mata_kuliah.dosen_id', 'left')
+            ->select('tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks, tb_dosen.nama as nama_dosen')
+            ->where('tb_krs.mahasiswa_id', session()->get('user_id'))
+            ->where('tb_krs.status', 'Disetujui')
+            ->get()->getResultArray();
+        
         $data = [
             'judul' => 'Dashboard Mahasiswa',
             'menu' => 'dashboard',
             'submenu' => '',
-            'page' => 'mahasiswa/v_dashboard_mahasiswa',
+            'page' => 'mahasiswa/v_dashboard',
+            'mahasiswa' => $mahasiswa,
+            'jadwal' => $jadwal,
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
@@ -173,6 +187,32 @@ class Dashboard extends BaseController
             'page' => 'mahasiswa/v_khs_mahasiswa',
             'mahasiswa' => $mahasiswa,
             'nilai' => $nilai,
+        ];
+        $data['user'] = $this->user;
+        return view('v_template_admin', $data);
+    }
+
+    public function JadwalKuliah()
+    {
+        $mahasiswa = $this->ModelMahasiswa->getBiodataWithAkademik(session()->get('user_id'));
+        
+        // Get mata kuliah yang diambil mahasiswa
+        $db = \Config\Database::connect();
+        $jadwal = $db->table('tb_krs')
+            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_krs.mata_kuliah_id')
+            ->join('tb_dosen', 'tb_dosen.id_dosen = tb_mata_kuliah.dosen_id', 'left')
+            ->select('tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks, tb_dosen.nama as nama_dosen')
+            ->where('tb_krs.mahasiswa_id', session()->get('user_id'))
+            ->where('tb_krs.status', 'Disetujui')
+            ->get()->getResultArray();
+        
+        $data = [
+            'judul' => 'Jadwal Kuliah',
+            'menu' => 'jadwal',
+            'submenu' => '',
+            'page' => 'mahasiswa/v_jadwal_mahasiswa',
+            'mahasiswa' => $mahasiswa,
+            'jadwal' => $jadwal,
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);

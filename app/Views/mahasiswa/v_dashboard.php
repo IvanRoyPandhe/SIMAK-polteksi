@@ -19,7 +19,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6>IPK Kumulatif</h6>
-                            <h3>3.45</h3>
+                            <h3><?= isset($mahasiswa['ipk']) ? number_format($mahasiswa['ipk'], 2) : '0.00' ?></h3>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-chart-line fa-2x"></i>
@@ -35,7 +35,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6>SKS Lulus</h6>
-                            <h3>108</h3>
+                            <h3><?= isset($mahasiswa['sks_lulus']) ? $mahasiswa['sks_lulus'] : '0' ?></h3>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-graduation-cap fa-2x"></i>
@@ -51,7 +51,7 @@
                     <div class="d-flex justify-content-between">
                         <div>
                             <h6>Semester</h6>
-                            <h3>6</h3>
+                            <h3><?= isset($mahasiswa['semester_aktif']) ? $mahasiswa['semester_aktif'] : '1' ?></h3>
                         </div>
                         <div class="align-self-center">
                             <i class="fas fa-calendar-alt fa-2x"></i>
@@ -66,11 +66,11 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between">
                         <div>
-                            <h6>Status KRS</h6>
-                            <h3>Draft</h3>
+                            <h6>Status Akademik</h6>
+                            <h3><?= isset($mahasiswa['status_akademik']) ? $mahasiswa['status_akademik'] : 'Aktif' ?></h3>
                         </div>
                         <div class="align-self-center">
-                            <i class="fas fa-file-alt fa-2x"></i>
+                            <i class="fas fa-user-graduate fa-2x"></i>
                         </div>
                     </div>
                 </div>
@@ -82,41 +82,37 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
-                    <h5>Jadwal Kuliah Hari Ini</h5>
+                    <h5>Mata Kuliah yang Diambil</h5>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Waktu</th>
-                                    <th>Mata Kuliah</th>
-                                    <th>Dosen</th>
-                                    <th>Ruangan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>08:00 - 10:30</td>
-                                    <td>Pemrograman Web</td>
-                                    <td>Dr. Ahmad Fauzi</td>
-                                    <td>Lab Komputer 1</td>
-                                </tr>
-                                <tr>
-                                    <td>10:30 - 13:00</td>
-                                    <td>Basis Data</td>
-                                    <td>Dr. Siti Nurhaliza</td>
-                                    <td>Lab Komputer 2</td>
-                                </tr>
-                                <tr>
-                                    <td>13:00 - 15:30</td>
-                                    <td>Jaringan Komputer</td>
-                                    <td>Dr. Budi Santoso</td>
-                                    <td>Ruang 301</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <?php if (empty($jadwal)): ?>
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Belum ada mata kuliah yang diambil atau KRS belum disetujui.
+                        </div>
+                    <?php else: ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Kode MK</th>
+                                        <th>Mata Kuliah</th>
+                                        <th>SKS</th>
+                                        <th>Dosen</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($jadwal as $j): ?>
+                                    <tr>
+                                        <td><?= $j['kode_matkul'] ?></td>
+                                        <td><?= $j['nama_matkul'] ?></td>
+                                        <td><?= $j['sks'] ?></td>
+                                        <td><?= $j['nama_dosen'] ?? 'Belum ditentukan' ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

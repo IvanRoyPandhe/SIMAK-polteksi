@@ -403,12 +403,6 @@
                                 <span>Info Beasiswa</span>
                             </a>
                         </li>
-                        <li class="sidebar-item <?= $menu == 'artikel' ? 'active' : '' ?>">
-                            <a href="<?= base_url('Artikel') ?>" class='sidebar-link'>
-                                <i class="fas fa-newspaper"></i>
-                                <span>Artikel Kampus</span>
-                            </a>
-                        </li>
                         <li class="sidebar-item <?= $menu == 'pengaduan' ? 'active' : '' ?>">
                             <a href="<?= base_url('Pengaduan') ?>" class='sidebar-link'>
                                 <i class="fas fa-question-circle"></i>
