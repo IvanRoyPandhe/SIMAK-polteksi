@@ -414,16 +414,23 @@
                                 <span>Input Nilai</span>
                             </a>
                         </li>
-                        <li class="sidebar-item <?= $menu == 'bimbingan' ? 'active' : '' ?>">
-                            <a href="<?= base_url('Dashboard/Dosen/BimbinganAkademik') ?>" class='sidebar-link'>
-                                <i class="fas fa-user-graduate"></i>
-                                <span>Bimbingan Akademik</span>
+
+                        <li class="sidebar-item <?= $menu == 'approval-krs' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/ApprovalKRS') ?>" class='sidebar-link'>
+                                <i class="fas fa-clipboard-check"></i>
+                                <span>Approval KRS</span>
                             </a>
                         </li>
                         <li class="sidebar-item <?= $menu == 'mata-kuliah' ? 'active' : '' ?>">
                             <a href="<?= base_url('dosen/mata-kuliah') ?>" class='sidebar-link'>
                                 <i class="fas fa-book"></i>
                                 <span>Mata Kuliah Saya</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item <?= $menu == 'absensi' ? 'active' : '' ?>">
+                            <a href="<?= base_url('Dashboard/Dosen/Absensi') ?>" class='sidebar-link'>
+                                <i class="fas fa-user-check"></i>
+                                <span>Absensi Mahasiswa</span>
                             </a>
                         </li>
                         <li class="sidebar-item <?= $menu == 'materi-kuliah' ? 'active' : '' ?>">

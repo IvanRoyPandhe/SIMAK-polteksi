@@ -159,16 +159,23 @@ class Dashboard extends BaseController
         // Delete existing KRS
         $db->table('tb_krs')->where('mahasiswa_id', $mahasiswa_id)->delete();
         
+        // Get current active period
+        $periode_aktif = $this->ModelPeriodeAkademik->getPeriodeAktif();
+        $periode_id = $periode_aktif['id_periode'] ?? 1;
+        
         // Insert new KRS
         foreach ($matkul_selected as $matkul_id) {
-            $db->table('tb_krs')->insert([
+            $result = $db->table('tb_krs')->insert([
                 'mahasiswa_id' => $mahasiswa_id,
                 'mata_kuliah_id' => $matkul_id,
                 'kelas_id' => 1, // Default kelas
-                'periode_id' => 1, // Current period
+                'periode_id' => $periode_id,
                 'status' => 'Menunggu Persetujuan',
                 'tgl_pengajuan' => date('Y-m-d H:i:s')
             ]);
+            
+            // Debug: Log the insert
+            log_message('info', 'KRS Insert - Mahasiswa: ' . $mahasiswa_id . ', Matkul: ' . $matkul_id . ', Periode: ' . $periode_id . ', Result: ' . ($result ? 'Success' : 'Failed'));
         }
         
         session()->setFlashdata('info', 'KRS berhasil disubmit dan menunggu persetujuan!');

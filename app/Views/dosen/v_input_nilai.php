@@ -164,21 +164,56 @@ function tampilkanNilai() {
     document.getElementById('tabelNilai').style.display = 'block';
     document.getElementById('infoKelas').textContent = document.getElementById('kelasSelect').selectedOptions[0].text;
     
-    // Show sample data for now
-    const sampleData = `
-        <tr>
-            <td>1</td>
-            <td>2021001</td>
-            <td>Ahmad Fauzi</td>
-            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
-            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
-            <td><input type="number" class="form-control form-control-sm" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
-            <td class="text-center fw-bold">-</td>
-            <td class="text-center">-</td>
-            <td class="text-center"><span class="badge bg-warning">Draft</span></td>
-        </tr>
-    `;
-    document.getElementById('daftarMahasiswa').innerHTML = sampleData;
+    // Load mahasiswa data via AJAX
+    fetch(`<?= base_url('Dashboard/Dosen/getMahasiswaByKelas') ?>/${kelas}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error);
+            }
+            
+            let html = '';
+            if (data.length === 0) {
+                html = '<tr><td colspan="9" class="text-center">Tidak ada mahasiswa terdaftar di kelas ini</td></tr>';
+            } else {
+                data.forEach((mahasiswa, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${mahasiswa.nim}</td>
+                            <td>${mahasiswa.nama}</td>
+                            <td><input type="number" class="form-control form-control-sm" name="nilai[${mahasiswa.id_mahasiswa}][tugas]" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+                            <td><input type="number" class="form-control form-control-sm" name="nilai[${mahasiswa.id_mahasiswa}][uts]" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+                            <td><input type="number" class="form-control form-control-sm" name="nilai[${mahasiswa.id_mahasiswa}][uas]" min="0" max="100" value="" onchange="hitungNilaiAkhir(this)"></td>
+                            <td class="text-center fw-bold nilai-akhir">-</td>
+                            <td class="text-center nilai-huruf">-</td>
+                            <td class="text-center"><span class="badge bg-warning">Draft</span></td>
+                        </tr>
+                    `;
+                });
+            }
+            document.getElementById('daftarMahasiswa').innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            alert(`Gagal memuat data mahasiswa: ${error.message}`);
+            // Show sample data as fallback
+            const fallbackHtml = `
+                <tr>
+                    <td colspan="9" class="text-center text-muted">
+                        <i class="fas fa-exclamation-triangle"></i><br>
+                        Gagal memuat data dari database<br>
+                        <small>Error: ${error.message}</small>
+                    </td>
+                </tr>
+            `;
+            document.getElementById('daftarMahasiswa').innerHTML = fallbackHtml;
+        });
 }
 
 function hitungNilaiAkhir(input) {
@@ -208,6 +243,12 @@ function hitungNilaiAkhir(input) {
 }
 
 function simpanNilai() {
+    const kelas = document.getElementById('kelasSelect').value;
+    if (!kelas) {
+        alert('Pilih kelas terlebih dahulu');
+        return;
+    }
+    
     Swal.fire({
         title: 'Simpan Nilai?',
         text: 'Nilai akan disimpan sebagai draft',
@@ -217,7 +258,33 @@ function simpanNilai() {
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) {
-            Swal.fire('Tersimpan!', 'Nilai berhasil disimpan sebagai draft', 'success');
+            const formData = new FormData();
+            formData.append('kelas_id', kelas);
+            
+            // Collect all nilai data
+            const inputs = document.querySelectorAll('#daftarMahasiswa input[type="number"]');
+            inputs.forEach(input => {
+                if (input.value) {
+                    formData.append(input.name, input.value);
+                }
+            });
+            
+            fetch('<?= base_url("Dashboard/Dosen/SaveNilai") ?>', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire('Tersimpan!', data.message, 'success');
+                } else {
+                    Swal.fire('Error!', 'Gagal menyimpan nilai', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error!', 'Terjadi kesalahan', 'error');
+            });
         }
     });
 }

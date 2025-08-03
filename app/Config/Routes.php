@@ -17,12 +17,17 @@ $routes->get('Dashboard/Mahasiswa/KHS', 'Dashboard\Mahasiswa::KHS');
 // Routes untuk Dashboard Dosen
 $routes->group('Dashboard/Dosen', ['filter' => 'filterdosen'], function($routes) {
     $routes->get('', 'Dashboard\Dosen::index');
-    $routes->get('BimbinganAkademik', 'Dashboard\Dosen::BimbinganAkademik');
     $routes->get('JadwalMengajar', 'Dashboard\Dosen::JadwalMengajar');
     $routes->get('MateriKuliah', 'Dashboard\Dosen::MateriKuliah');
     $routes->get('Laporan', 'Dashboard\Dosen::Laporan');
     $routes->get('InputNilai', 'Dashboard\Dosen::InputNilai');
+    $routes->get('getMahasiswaByKelas/(:num)', 'Dashboard\Dosen::getMahasiswaByKelas/$1');
     $routes->post('SaveNilai', 'Dashboard\Dosen::SaveNilai');
+    $routes->get('Absensi', 'Dashboard\Dosen::Absensi');
+    $routes->get('Tugas', 'Dashboard\Dosen::Tugas');
+    $routes->get('ApprovalKRS', 'Dashboard\Dosen::ApprovalKRS');
+    $routes->post('ApproveKRS/(:num)', 'Dashboard\Dosen::ApproveKRS/$1');
+    $routes->post('RejectKRS/(:num)', 'Dashboard\Dosen::RejectKRS/$1');
 });
 
 // Routes untuk Admin Mata Kuliah

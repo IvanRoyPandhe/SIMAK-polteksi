@@ -56,16 +56,23 @@ class ModelKRS extends Model
 
     public function getKRSForApproval($dosen_id)
     {
-        return $this->db->table('tb_krs')
+        // Debug: Log the query
+        log_message('info', 'Getting KRS for approval - Dosen ID: ' . $dosen_id);
+        
+        $result = $this->db->table('tb_krs')
             ->join('tb_mahasiswa', 'tb_mahasiswa.id_mahasiswa = tb_krs.mahasiswa_id')
-            ->join('tb_kelas', 'tb_kelas.id_kelas = tb_krs.kelas_id')
-            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_kelas.matkul_id')
-            ->join('tb_periode_akademik', 'tb_periode_akademik.id_periode = tb_krs.periode_id')
-            ->select('tb_krs.*, tb_mahasiswa.nama as nama_mahasiswa, tb_mahasiswa.nim, tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks, tb_periode_akademik.semester, tb_periode_akademik.tahun_akademik')
-            ->where('tb_mahasiswa.dosen_pa_id', $dosen_id)
+            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_krs.mata_kuliah_id')
+            ->join('tb_periode_akademik', 'tb_periode_akademik.id_periode = tb_krs.periode_id', 'left')
+            ->select('tb_krs.*, tb_mahasiswa.nama as nama_mahasiswa, tb_mahasiswa.nim, tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks, tb_mata_kuliah.dosen_id, tb_periode_akademik.semester, tb_periode_akademik.tahun_akademik')
+            ->where('tb_mata_kuliah.dosen_id', $dosen_id)
             ->where('tb_krs.status', 'Menunggu Persetujuan')
             ->orderBy('tb_krs.tgl_pengajuan', 'DESC')
             ->get()->getResultArray();
+            
+        // Debug: Log the result count
+        log_message('info', 'KRS approval query result count: ' . count($result));
+        
+        return $result;
     }
 
     public function approveKRS($id_krs, $status, $catatan = null)

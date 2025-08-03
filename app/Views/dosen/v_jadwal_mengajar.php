@@ -20,17 +20,26 @@
                         <?php if (!empty($jadwal)): ?>
                             <?php foreach ($jadwal as $j): ?>
                                 <tr>
-                                    <td><?= $j['hari'] ?? 'Senin' ?></td>
-                                    <td><?= $j['jam_mulai'] ?? '08:00' ?> - <?= $j['jam_selesai'] ?? '10:00' ?></td>
-                                    <td><?= $j['nama_matkul'] ?></td>
-                                    <td><?= $j['kelas'] ?? 'A' ?></td>
-                                    <td><?= $j['ruangan'] ?? 'R101' ?></td>
-                                    <td><?= $j['semester'] ?> - <?= $j['tahun_akademik'] ?></td>
+                                    <td><span class="badge bg-primary"><?= $j['hari'] ?? 'Belum dijadwalkan' ?></span></td>
+                                    <td><strong><?= $j['jam_mulai'] ?? '08:00' ?> - <?= $j['jam_selesai'] ?? '10:00' ?></strong></td>
+                                    <td>
+                                        <div><strong><?= $j['nama_matkul'] ?></strong></div>
+                                        <small class="text-muted"><?= $j['kode_matkul'] ?> (<?= $j['sks'] ?> SKS)</small>
+                                    </td>
+                                    <td><span class="badge bg-success"><?= $j['nama_kelas'] ?? 'Kelas A' ?></span></td>
+                                    <td><i class="fas fa-door-open me-1"></i><?= $j['ruangan'] ?? 'Belum ditentukan' ?></td>
+                                    <td>
+                                        <div><?= $j['semester'] ?></div>
+                                        <small class="text-muted"><?= $j['tahun_akademik'] ?></small>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="6" class="text-center">Belum ada jadwal mengajar</td>
+                                <td colspan="6" class="text-center py-4">
+                                    <i class="fas fa-calendar-times fa-2x text-muted mb-2"></i>
+                                    <div class="text-muted">Belum ada jadwal mengajar untuk semester ini</div>
+                                </td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

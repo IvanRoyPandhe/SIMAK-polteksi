@@ -35,6 +35,8 @@ class Dosen extends BaseController
             'submenu'   => '',
             'page'      => 'dosen/v_dashboard_dosen',
             'stats'     => $this->getDosenStats($dosen_id),
+            'jadwal_hari_ini' => $this->getJadwalHariIni($dosen_id),
+            'reminders' => $this->getReminders($dosen_id),
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
@@ -68,19 +70,7 @@ class Dosen extends BaseController
         return view('v_template_admin', $data);
     }
 
-    public function MahasiswaBimbingan()
-    {
-        $dosen_id = session()->get('dosen_id') ?? 1;
-        $data = [
-            'judul'     => 'Mahasiswa Bimbingan',
-            'menu'      => 'mahasiswa-bimbingan',
-            'submenu'   => '',
-            'page'      => 'dosen/v_mahasiswa_bimbingan',
-            'mahasiswa' => $this->getMahasiswaBimbingan($dosen_id),
-        ];
-        $data['user'] = $this->user;
-        return view('v_template_admin', $data);
-    }
+
 
     public function RekapNilai()
     {
@@ -98,13 +88,13 @@ class Dosen extends BaseController
 
     public function Absensi()
     {
-        $dosen_id = session()->get('dosen_id') ?? 1;
+        $dosen_id = session()->get('user_id');
         $data = [
             'judul'     => 'Absensi Mahasiswa',
             'menu'      => 'absensi',
             'submenu'   => '',
             'page'      => 'dosen/v_absensi',
-            'kelas'     => $this->ModelKHS->getKelasByDosen($dosen_id),
+            'kelas'     => $this->getKelasDosen($dosen_id),
         ];
         $data['user'] = $this->user;
         return view('v_template_admin', $data);
@@ -152,15 +142,33 @@ class Dosen extends BaseController
         return view('v_template_admin', $data);
     }
 
-    public function BimbinganAkademik()
+
+
+    public function ApprovalKRS()
     {
         $dosen_id = session()->get('user_id');
+        
+        // Debug: Check what mata kuliah this dosen teaches
+        $db = \Config\Database::connect();
+        $mata_kuliah_dosen = $db->table('tb_mata_kuliah')
+            ->where('dosen_id', $dosen_id)
+            ->get()->getResultArray();
+        log_message('info', 'Dosen ' . $dosen_id . ' mengampu mata kuliah: ' . json_encode($mata_kuliah_dosen));
+        
+        // Debug: Check all KRS with status Menunggu Persetujuan
+        $all_pending_krs = $db->table('tb_krs')
+            ->join('tb_mahasiswa', 'tb_mahasiswa.id_mahasiswa = tb_krs.mahasiswa_id')
+            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_krs.mata_kuliah_id')
+            ->select('tb_krs.*, tb_mahasiswa.nama, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.dosen_id')
+            ->where('tb_krs.status', 'Menunggu Persetujuan')
+            ->get()->getResultArray();
+        log_message('info', 'All pending KRS: ' . json_encode($all_pending_krs));
+        
         $data = [
-            'judul'     => 'Bimbingan Akademik',
-            'menu'      => 'bimbingan',
+            'judul'     => 'Approval KRS',
+            'menu'      => 'approval-krs',
             'submenu'   => '',
-            'page'      => 'dosen/v_bimbingan_akademik',
-            'mahasiswa_bimbingan' => $this->getMahasiswaBimbingan($dosen_id),
+            'page'      => 'dosen/v_approval_krs',
             'krs_list'  => $this->ModelKRS->getKRSForApproval($dosen_id),
         ];
         $data['user'] = $this->user;
@@ -197,25 +205,73 @@ class Dosen extends BaseController
         return view('v_template_admin', $data);
     }
 
+    public function getMahasiswaByKelas($kelas_id)
+    {
+        try {
+            $db = \Config\Database::connect();
+            
+            // Since KRS stores mata_kuliah_id directly, we need to adjust the query
+            $mahasiswa = $db->table('tb_krs')
+                ->join('tb_mahasiswa', 'tb_mahasiswa.id_mahasiswa = tb_krs.mahasiswa_id')
+                ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_krs.mata_kuliah_id')
+                ->select('tb_mahasiswa.id_mahasiswa, tb_mahasiswa.nim, tb_mahasiswa.nama, tb_mata_kuliah.nama_matkul')
+                ->where('tb_krs.kelas_id', $kelas_id)
+                ->where('tb_krs.status', 'Disetujui')
+                ->orderBy('tb_mahasiswa.nim', 'ASC')
+                ->get()->getResultArray();
+            
+            return $this->response->setJSON($mahasiswa);
+            
+        } catch (\Exception $e) {
+            return $this->response->setJSON(['error' => $e->getMessage()]);
+        }
+    }
+
     public function SaveNilai()
     {
+        $db = \Config\Database::connect();
+        $kelas_id = $this->request->getPost('kelas_id');
         $nilai_data = $this->request->getPost('nilai');
+        
         foreach ($nilai_data as $mahasiswa_id => $nilai) {
-            if (!empty($nilai['nilai_angka'])) {
+            $tugas = floatval($nilai['tugas'] ?? 0);
+            $uts = floatval($nilai['uts'] ?? 0);
+            $uas = floatval($nilai['uas'] ?? 0);
+            
+            if ($tugas > 0 || $uts > 0 || $uas > 0) {
+                $nilai_akhir = ($tugas * 0.3) + ($uts * 0.3) + ($uas * 0.4);
+                $nilai_huruf = $this->convertToGrade($nilai_akhir);
+                
                 $data = [
                     'mahasiswa_id' => $mahasiswa_id,
-                    'matkul_id' => $this->request->getPost('matkul_id'),
-                    'semester_aktif' => $this->request->getPost('semester_aktif'),
-                    'tahun_akademik' => $this->request->getPost('tahun_akademik'),
-                    'nilai_angka' => $nilai['nilai_angka'],
-                    'nilai_huruf' => $this->convertToGrade($nilai['nilai_angka']),
-                    'bobot' => $this->convertToPoint($this->convertToGrade($nilai['nilai_angka'])),
+                    'kelas_id' => $kelas_id,
+                    'tugas' => $tugas,
+                    'uts' => $uts,
+                    'uas' => $uas,
+                    'nilai_akhir' => $nilai_akhir,
+                    'nilai_huruf' => $nilai_huruf,
+                    'status' => 'Draft',
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
                 ];
-                $this->ModelKHS->saveOrUpdateNilai($data);
+                
+                // Check if record exists
+                $existing = $db->table('tb_nilai')
+                    ->where('mahasiswa_id', $mahasiswa_id)
+                    ->where('kelas_id', $kelas_id)
+                    ->get()->getRowArray();
+                
+                if ($existing) {
+                    $db->table('tb_nilai')
+                        ->where('id_nilai', $existing['id_nilai'])
+                        ->update($data);
+                } else {
+                    $db->table('tb_nilai')->insert($data);
+                }
             }
         }
-        session()->setFlashdata('info', 'Nilai berhasil disimpan!');
-        return redirect()->to(base_url('Dashboard/Dosen/InputNilai'));
+        
+        return $this->response->setJSON(['status' => 'success', 'message' => 'Nilai berhasil disimpan!']);
     }
 
     private function convertToGrade($nilai_angka)
@@ -245,39 +301,49 @@ class Dosen extends BaseController
     private function getDosenStats($dosen_id)
     {
         $db = \Config\Database::connect();
-        
-        $total_kelas = $db->table('tb_kelas')
-            ->where('dosen_id', $dosen_id)
-            ->countAllResults();
-            
-        $total_mahasiswa = $db->table('tb_kelas')
-            ->join('tb_krs', 'tb_krs.kelas_id = tb_kelas.id_kelas')
-            ->where('tb_kelas.dosen_id', $dosen_id)
-            ->where('tb_krs.status', 'Disetujui')
-            ->countAllResults();
-            
-        $mahasiswa_bimbingan = $db->table('tb_mahasiswa')
-            ->where('dosen_pa_id', $dosen_id)
-            ->countAllResults();
-            
-        $nilai_pending = $db->table('tb_nilai')
-            ->join('tb_kelas', 'tb_kelas.id_kelas = tb_nilai.kelas_id')
-            ->where('tb_kelas.dosen_id', $dosen_id)
-            ->where('tb_nilai.status', 'Draft')
-            ->countAllResults();
-            
+
         return [
-            'total_kelas' => $total_kelas,
-            'total_mahasiswa' => $total_mahasiswa,
-            'mahasiswa_bimbingan' => $mahasiswa_bimbingan,
-            'nilai_pending' => $nilai_pending
+            'total_kelas' => $db->table('tb_kelas')
+                ->where('dosen_id', $dosen_id)
+                ->countAllResults(),
+
+            'total_mahasiswa' => $db->table('tb_kelas')
+                ->select('DISTINCT tb_krs.mahasiswa_id')
+                ->join('tb_krs', 'tb_krs.kelas_id = tb_kelas.id_kelas')
+                ->where('tb_kelas.dosen_id', $dosen_id)
+                ->where('tb_krs.status', 'Disetujui')
+                ->countAllResults(false),
+
+            'nilai_pending' => $db->table('tb_nilai')
+                ->join('tb_kelas', 'tb_kelas.id_kelas = tb_nilai.kelas_id')
+                ->where('tb_kelas.dosen_id', $dosen_id)
+                ->where('tb_nilai.status', 'Draft')
+                ->countAllResults()
         ];
     }
+
 
     private function getJadwalMengajar($dosen_id)
     {
         $db = \Config\Database::connect();
         
+        // Try to get from jadwal_kuliah table first
+        if ($db->tableExists('tb_jadwal_kuliah')) {
+            $jadwal = $db->table('tb_jadwal_kuliah')
+                ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_jadwal_kuliah.mata_kuliah')
+                ->join('tb_ruangan', 'tb_ruangan.id_ruangan = tb_jadwal_kuliah.ruangan_id', 'left')
+                ->select('tb_jadwal_kuliah.*, tb_mata_kuliah.kode_matkul, tb_mata_kuliah.nama_matkul, tb_mata_kuliah.sks, tb_ruangan.nama_ruangan as ruangan')
+                ->where('tb_jadwal_kuliah.dosen', $dosen_id)
+                ->orderBy('tb_jadwal_kuliah.hari', 'ASC')
+                ->orderBy('tb_jadwal_kuliah.jam_mulai', 'ASC')
+                ->get()->getResultArray();
+            
+            if (!empty($jadwal)) {
+                return $jadwal;
+            }
+        }
+        
+        // Fallback to kelas table
         return $db->table('tb_kelas')
             ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_kelas.matkul_id')
             ->join('tb_periode_akademik', 'tb_periode_akademik.id_periode = tb_kelas.periode_id')
@@ -298,15 +364,7 @@ class Dosen extends BaseController
             ->get()->getResultArray();
     }
 
-    private function getMahasiswaBimbingan($dosen_id)
-    {
-        $db = \Config\Database::connect();
-        return $db->table('tb_mahasiswa')
-            ->join('tb_prodi', 'tb_prodi.id_prodi = tb_mahasiswa.prodi_id')
-            ->select('tb_mahasiswa.*, tb_prodi.nama_prodi')
-            ->where('tb_mahasiswa.dosen_pa_id', $dosen_id)
-            ->get()->getResultArray();
-    }
+
 
     private function getRekapNilai($dosen_id)
     {
@@ -336,6 +394,12 @@ class Dosen extends BaseController
     private function getTugasByDosen($dosen_id)
     {
         $db = \Config\Database::connect();
+        
+        // Check if tb_tugas table exists, if not return empty array
+        if (!$db->tableExists('tb_tugas')) {
+            return [];
+        }
+        
         return $db->table('tb_tugas')
             ->join('tb_kelas', 'tb_kelas.id_kelas = tb_tugas.kelas_id')
             ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_kelas.matkul_id')
@@ -368,4 +432,56 @@ class Dosen extends BaseController
             ->orderBy('tb_konsultasi.tanggal_konsultasi', 'DESC')
             ->get()->getResultArray();
     }
+
+    private function getJadwalHariIni($dosen_id)
+    {
+        $db = \Config\Database::connect();
+        $today = date('l');
+        
+        if (!$db->tableExists('tb_jadwal_kuliah')) {
+            return $this->getKelasDosen($dosen_id);
+        }
+        
+        return $db->table('tb_jadwal_kuliah')
+            ->join('tb_mata_kuliah', 'tb_mata_kuliah.id_matkul = tb_jadwal_kuliah.mata_kuliah')
+            ->join('tb_ruangan', 'tb_ruangan.id_ruangan = tb_jadwal_kuliah.ruangan_id')
+            ->select('tb_jadwal_kuliah.*, tb_mata_kuliah.nama_matkul, tb_ruangan.nama_ruangan, tb_jadwal_kuliah.jam_mulai, tb_jadwal_kuliah.jam_selesai')
+            ->where('tb_jadwal_kuliah.dosen', $dosen_id)
+            ->where('tb_jadwal_kuliah.hari', $today)
+            ->orderBy('tb_jadwal_kuliah.jam_mulai', 'ASC')
+            ->get()->getResultArray();
+    }
+
+    private function getReminders($dosen_id)
+    {
+        $db = \Config\Database::connect();
+        $reminders = [];
+        
+        // Check for nilai pending
+        $nilai_pending = $db->table('tb_nilai')
+            ->join('tb_kelas', 'tb_kelas.id_kelas = tb_nilai.kelas_id')
+            ->where('tb_kelas.dosen_id', $dosen_id)
+            ->where('tb_nilai.status', 'Draft')
+            ->countAllResults();
+        
+        if ($nilai_pending > 0) {
+            $reminders[] = [
+                'type' => 'warning',
+                'icon' => 'fas fa-exclamation-triangle',
+                'title' => 'Nilai Belum Difinalisasi',
+                'message' => $nilai_pending . ' nilai masih dalam status draft'
+            ];
+        }
+        
+        // Add a general reminder for academic activities
+        $reminders[] = [
+            'type' => 'info',
+            'icon' => 'fas fa-info-circle',
+            'title' => 'Periode Akademik Aktif',
+            'message' => 'Semester ' . date('Y') . ' sedang berlangsung'
+        ];
+        
+        return $reminders;
+    }
+
 }
